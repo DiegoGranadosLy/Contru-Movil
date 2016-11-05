@@ -16,6 +16,7 @@
     <ListView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/ListView_vendors" />
+        android:id="@+id/ListView_vendors"
+        android:clickable="true"/>
 
 </RelativeLayout>

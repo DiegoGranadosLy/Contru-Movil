@@ -66,7 +66,7 @@ public class Main_Page_App extends AppCompatActivity
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_search) {
             return true;
         }
 
@@ -95,6 +95,12 @@ public class Main_Page_App extends AppCompatActivity
             startActivity(siguiente);
         } else if (id == R.id.nav_vendors) {
             siguiente = new Intent(Main_Page_App.this, Vendors.class);
+            startActivity(siguiente);
+        } else if (id == R.id.nav_mainpage) {
+            siguiente = new Intent(Main_Page_App.this, Main_Page_App.class);
+            startActivity(siguiente);
+        } else if (id == R.id.nav_exit) {
+            siguiente = new Intent(Main_Page_App.this, MainActivity.class);
             startActivity(siguiente);
         }
 

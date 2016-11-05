@@ -25,12 +25,14 @@
     <!-- Fin Activity Registry-->
 
     <!-- -->
+    <string name="Main_Nav_Drawer_MainPage">Main Page</string>
     <string name="Main_Nav_Drawer_Clients">Clients</string>
     <string name="Main_Nav_Drawer_Products">Products</string>
     <string name="Main_Nav_Drawer_Orders">Orders</string>
     <string name="Main_Nav_Drawer_Providers">Providers</string>
     <string name="Main_Nav_Drawer_Categories">Categories</string>
     <string name="Main_Nav_Drawer_Vendors">Vendors</string>
+    <string name="Main_Nav_Drawer_Exit">Exit</string>
     <!-- -->
 
 
@@ -45,6 +47,9 @@
     <string name="title_activity_categories">Categories</string>
     <string name="title_activity_vendors">Vendors</string>
     <!-- Fin de no se que es-->
+
+
+    <string name="action_search">Search</string>
 </resources>
 
 

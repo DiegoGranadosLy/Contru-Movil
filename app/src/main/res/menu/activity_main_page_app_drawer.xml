@@ -3,6 +3,10 @@
 
     <group android:checkableBehavior="single">
         <item
+            android:id="@+id/nav_mainpage"
+            android:icon="@mipmap/ic_home_black_24dp"
+            android:title="@string/Main_Nav_Drawer_MainPage" />
+        <item
             android:id="@+id/nav_clients"
             android:icon="@mipmap/ic_person_pin_black_24dp"
             android:title="@string/Main_Nav_Drawer_Clients" />
@@ -26,6 +30,10 @@
             android:id="@+id/nav_vendors"
             android:icon="@mipmap/ic_streetview_black_24dp"
             android:title="@string/Main_Nav_Drawer_Vendors" />
+        <item
+            android:id="@+id/nav_exit"
+            android:icon="@mipmap/ic_exit_to_app_black_24dp"
+            android:title="@string/Main_Nav_Drawer_Exit" />
     </group>
 
 
