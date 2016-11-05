@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_registry"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="com.tec.diegogranados.contru_movil.Activitys.Registry">
+
+    <ScrollView
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true">
+        <LinearLayout
+            android:layout_height="fill_parent"
+            android:layout_width="fill_parent"
+            android:layout_centerInParent="true"
+            android:orientation="vertical"
+            android:weightSum="1">
+
+            <ImageView
+                android:id="@+id/imageView1"
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:scaleType="fitCenter"
+                android:src="@mipmap/ic_add_user" />
+
+            <TextView
+                android:layout_marginTop="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="25dp"
+                android:text="@string/Name_Registry"
+                android:gravity="center_horizontal"
+                />
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="45dp"
+                android:layout_marginBottom="20dp"
+                android:layout_marginTop="5dp"
+                android:id="@+id/EditText_Name_Registry"
+                android:gravity="center_horizontal"
+                />
+
+            <TextView
+                android:layout_marginTop="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="25dp"
+                android:text="@string/Last_Name_Registry"
+                android:gravity="center_horizontal"
+                android:id="@+id/textView" />
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="45dp"
+                android:layout_marginBottom="20dp"
+                android:layout_marginTop="5dp"
+                android:id="@+id/EditText_Last_Name_Registry"
+                android:gravity="center_horizontal"
+                />
+
+            <TextView
+                android:layout_marginTop="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="25dp"
+                android:text="@string/Nickname_Registry"
+                android:gravity="center_horizontal"
+                android:id="@+id/textView2" />
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="45dp"
+                android:layout_marginBottom="20dp"
+                android:layout_marginTop="5dp"
+                android:id="@+id/EditText_Nickname_Registry"
+                android:gravity="center_horizontal"
+                />
+
+            <TextView
+                android:layout_marginTop="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="25dp"
+                android:text="@string/Card_Number_Registry"
+                android:gravity="center_horizontal"
+                />
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="45dp"
+                android:layout_marginBottom="20dp"
+                android:layout_marginTop="5dp"
+                android:inputType="numberPassword"
+                android:id="@+id/EditText_Card_Number_Registry"
+                android:gravity="center_horizontal"
+                />
+
+
+
+            <TextView
+                android:layout_marginTop="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="25dp"
+                android:text="@string/Code_Registry"
+                android:gravity="center_horizontal"
+                />
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="45dp"
+                android:layout_marginBottom="20dp"
+                android:layout_marginTop="5dp"
+                android:inputType="numberPassword"
+                android:id="@+id/EditText_Code_Registry"
+                android:gravity="center_horizontal"
+                />
+
+            <TextView
+                android:layout_marginTop="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="25dp"
+                android:text="@string/Telephone_Registry"
+                android:gravity="center_horizontal"
+                />
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="45dp"
+                android:layout_marginBottom="40dp"
+                android:layout_marginTop="5dp"
+                android:inputType="number"
+                android:id="@+id/EditText_Telephone_Registry"
+                android:gravity="center_horizontal"
+                />
+
+            <TextView
+                android:layout_marginTop="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="25dp"
+                android:text="@string/Password_Registry"
+                android:gravity="center_horizontal"
+                />
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="45dp"
+                android:layout_marginBottom="40dp"
+                android:layout_marginTop="5dp"
+                android:inputType="number"
+                android:id="@+id/EditText_Password_Registry"
+                android:gravity="center_horizontal"
+                />
+
+            <Button
+                android:id = "@+id/button_Registry_Registrar"
+                android:layout_width = "match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/Button_Check_In_Registry"
+                >
+            </Button></LinearLayout>
+    </ScrollView>
+</RelativeLayout>

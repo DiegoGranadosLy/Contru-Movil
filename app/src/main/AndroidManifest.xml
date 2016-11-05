@@ -18,6 +18,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".Activitys.Login" />
+        <activity android:name=".Activitys.Registry" />
+        <activity
+            android:name=".Activitys.Main_Page_App"
+            android:label="@string/title_activity_main__page__app"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>

@@ -10,8 +10,36 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.tec.diegogranados.contru_movil.Activitys.MainActivity">
 
-    <TextView
-        android:layout_width="wrap_content"
+    <LinearLayout
         android:layout_height="wrap_content"
-        android:text="Hello World!" />
+        android:layout_width="wrap_content"
+        android:orientation="vertical"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true">
+
+
+
+        <ImageView
+            android:id="@+id/imageView1"
+            android:layout_width="250dp"
+            android:layout_height="250dp"
+            android:scaleType="fitCenter"
+            android:src="@mipmap/ic_shopping" />
+
+        <Button
+            android:id = "@+id/button_Login_Main"
+            android:layout_width = "match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/Login"
+            />
+
+        <Button
+            android:id = "@+id/button_Registry_Main"
+            android:layout_width = "match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/Registry"
+            />
+    </LinearLayout>
+
+
 </RelativeLayout>

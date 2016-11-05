@@ -1,3 +1,44 @@
 <resources>
     <string name="app_name">Contru-Movil</string>
+    <string name="title_activity_main__page__app">Main_Page_App</string>
+
+    <!-- Inicio Activity Main-->
+    <string name="Login">Login</string>
+    <string name="Registry">Registry</string>
+    <!-- Fin Activity Main-->
+
+    <!-- Inicio Activity Login-->
+    <string name="Name_Login">Enter your name</string>
+    <string name="Password_Login">Enter your password</string>
+    <string name="Button_Check_In_Login">Check In</string>
+    <!-- Fin Activity Login-->
+
+    <!-- Inicio Activity Registry-->
+    <string name="Name_Registry">Enter your name</string>
+    <string name="Last_Name_Registry">Enter your last name</string>
+    <string name="Nickname_Registry">Enter your Nickname</string>
+    <string name="Card_Number_Registry">Enter your card number</string>
+    <string name="Code_Registry">Enter your code</string>
+    <string name="Telephone_Registry">Enter your telephone</string>
+    <string name="Password_Registry">Enter your password</string>
+    <string name="Button_Check_In_Registry">Check in</string>
+    <!-- Fin Activity Registry-->
+
+    <!-- -->
+    <string name="Main_Nav_Drawer_Clients">Clients</string>
+    <string name="Main_Nav_Drawer_Products">Products</string>
+    <string name="Main_Nav_Drawer_Orders">Orders</string>
+    <string name="Main_Nav_Drawer_Providers">Providers</string>
+    <string name="Main_Nav_Drawer_Categories">Categories</string>
+    <string name="Main_Nav_Drawer_Vendors">Vendors</string>
+    <!-- -->
+
+
+    <!-- Inicio de no se que es-->
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="action_settings">Settings</string>
+    <!-- Fin de no se que es-->
 </resources>
+
+

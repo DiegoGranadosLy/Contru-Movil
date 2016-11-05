@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_clients"
+            android:icon="@mipmap/ic_person_pin_black_24dp"
+            android:title="@string/Main_Nav_Drawer_Clients" />
+        <item
+            android:id="@+id/nav_products"
+            android:icon="@mipmap/ic_description_black_24dp"
+            android:title="@string/Main_Nav_Drawer_Products" />
+        <item
+            android:id="@+id/nav_orders"
+            android:icon="@mipmap/ic_local_shipping_black_24dp"
+            android:title="@string/Main_Nav_Drawer_Orders" />
+        <item
+            android:id="@+id/nav_providers"
+            android:icon="@mipmap/ic_supervisor_account_black_24dp"
+            android:title="@string/Main_Nav_Drawer_Providers" />
+        <item
+            android:id="@+id/nav_categories"
+            android:icon="@mipmap/ic_assignment_black_24dp"
+            android:title="@string/Main_Nav_Drawer_Categories" />
+        <item
+            android:id="@+id/nav_vendors"
+            android:icon="@mipmap/ic_streetview_black_24dp"
+            android:title="@string/Main_Nav_Drawer_Vendors" />
+    </group>
+
+
+</menu>
