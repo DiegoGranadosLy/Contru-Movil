@@ -64,4 +64,6 @@ public class Registry extends AppCompatActivity {
         protected void onPostExecute(String result) {
         }
     }
+
+
 }

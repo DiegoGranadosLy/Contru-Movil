@@ -1,6 +1,7 @@
 package com.tec.diegogranados.contru_movil.Activitys;
 
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -13,22 +14,25 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ListView;
 
 import com.tec.diegogranados.contru_movil.R;
 
-public class Main_Page_App extends AppCompatActivity
+public class Providers extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     Intent siguiente;
+    ListView listview;
+    Communicator comunicador;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main_page_app);
+        setContentView(R.layout.activity_providers);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.floating_button_refresh_Main_Page);
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -45,6 +49,9 @@ public class Main_Page_App extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        comunicador = new Communicator();
+        comunicador.execute("","","");
     }
 
     @Override
@@ -79,27 +86,41 @@ public class Main_Page_App extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_clients) {
-            siguiente = new Intent(Main_Page_App.this, Clients.class);
+            siguiente = new Intent(Providers.this, Clients.class);
             startActivity(siguiente);
         } else if (id == R.id.nav_products) {
-            siguiente = new Intent(Main_Page_App.this, Products.class);
+            siguiente = new Intent(Providers.this, Products.class);
             startActivity(siguiente);
         } else if (id == R.id.nav_orders) {
-            siguiente = new Intent(Main_Page_App.this, Orders.class);
+            siguiente = new Intent(Providers.this, Orders.class);
             startActivity(siguiente);
         } else if (id == R.id.nav_providers) {
-            siguiente = new Intent(Main_Page_App.this, Providers.class);
+            siguiente = new Intent(Providers.this, Providers.class);
             startActivity(siguiente);
         } else if (id == R.id.nav_categories) {
-            siguiente = new Intent(Main_Page_App.this, Categories.class);
+            siguiente = new Intent(Providers.this, Categories.class);
             startActivity(siguiente);
         } else if (id == R.id.nav_vendors) {
-            siguiente = new Intent(Main_Page_App.this, Vendors.class);
+            siguiente = new Intent(Providers.this, Vendors.class);
             startActivity(siguiente);
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    public class Communicator extends AsyncTask<String, String, String> {
+        public Communicator() {
+        }
+
+        @Override
+        protected String doInBackground(String... params){
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+        }
     }
 }
