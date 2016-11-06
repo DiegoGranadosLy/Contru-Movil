@@ -36,6 +36,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 accion = new Intent(MainActivity.this, Registry.class);
+                accion.putExtra("Action","Add");
                 startActivity(accion);
             }
         });

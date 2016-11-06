@@ -1,11 +1,14 @@
 package com.tec.diegogranados.contru_movil.Activitys;
 
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.view.MenuItemCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.SearchView;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -17,11 +20,16 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.appindexing.Action;
+import com.google.android.gms.appindexing.AppIndex;
+import com.google.android.gms.appindexing.Thing;
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.tec.diegogranados.contru_movil.ListView.Order_Adapter_List;
 import com.tec.diegogranados.contru_movil.ListView.Order_Entry_List;
 import com.tec.diegogranados.contru_movil.R;
@@ -35,6 +43,11 @@ public class Clients extends AppCompatActivity
     ListView listview;
     Communicator comunicador;
     Order_Adapter_List adapter;
+    /**
+     * ATTENTION: This was auto-generated to implement the App Indexing API.
+     * See https://g.co/AppIndexing/AndroidStudio for more information.
+     */
+    private GoogleApiClient client;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,7 +75,8 @@ public class Clients extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         comunicador = new Communicator();
-        comunicador.execute(new String[0][0],new String[0][0],new String[0][0]);
+        comunicador.execute(new String[0][0], new String[0][0], new String[0][0]);
+
     }
 
     @Override
@@ -89,6 +103,7 @@ public class Clients extends AppCompatActivity
                 searchView.setIconified(true);
                 return true;
             }
+
             @Override
             public boolean onQueryTextChange(String newText) {
                 Clients.this.adapter.getFilter().filter(newText);
@@ -110,7 +125,6 @@ public class Clients extends AppCompatActivity
         return super.onOptionsItemSelected(item);
     }
 
-    @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         int id = item.getItemId();
@@ -146,6 +160,7 @@ public class Clients extends AppCompatActivity
         return true;
     }
 
+
     public class Communicator extends AsyncTask<String[][], String[][], String[][]> {
         public Communicator() {
         }
@@ -165,24 +180,24 @@ public class Clients extends AppCompatActivity
         }
     }
 
-    private void Set_Adapter(ListView lista){
+    private void Set_Adapter(ListView lista) {
 
-        String[][] misPedidos ={{"Tecnologico","Cimientos","Concluido"}
-                ,{"UNA","Paredes","Incompleto"},{"UCR","Cielo","Concluido"}
-                ,{"HP","Instalacion Electrica","Incompleto"},{"Teradyne","Instalacion Pluvial","Incompleto"}
-                ,{"Casa Diego","Techo","Concluido"},{"Casa Alerto","Mueble Pintura","Incompleto"}
-                ,{"El Aguila","Tuberia","75","Incompleto"},{"Casa Enso","Canoas","Incompleto"}
-                ,{"UNA","Paredes","Incompleto"},{"UCR","Cielo","Concluido"}
-                ,{"HP","Instalacion Electrica","Incompleto"},{"Teradyne","Instalacion Pluvial","Incompleto"}
-                ,{"Casa Diego","Techo","Concluido"},{"Casa Alerto","Mueble Pintura","Incompleto"}
-                ,{"El Aguila","Tuberia","75","Incompleto"},{"Casa Enso","Canoas","Incompleto"}};
+        String[][] misPedidos = {{"Tecnologico", "Cimientos", "Concluido"}
+                , {"UNA", "Paredes", "Incompleto"}, {"UCR", "Cielo", "Concluido"}
+                , {"HP", "Instalacion Electrica", "Incompleto"}, {"Teradyne", "Instalacion Pluvial", "Incompleto"}
+                , {"Casa Diego", "Techo", "Concluido"}, {"Casa Alerto", "Mueble Pintura", "Incompleto"}
+                , {"El Aguila", "Tuberia", "75", "Incompleto"}, {"Casa Enso", "Canoas", "Incompleto"}
+                , {"UNA", "Paredes", "Incompleto"}, {"UCR", "Cielo", "Concluido"}
+                , {"HP", "Instalacion Electrica", "Incompleto"}, {"Teradyne", "Instalacion Pluvial", "Incompleto"}
+                , {"Casa Diego", "Techo", "Concluido"}, {"Casa Alerto", "Mueble Pintura", "Incompleto"}
+                , {"El Aguila", "Tuberia", "75", "Incompleto"}, {"Casa Enso", "Canoas", "Incompleto"}};
 
         ArrayList<Order_Entry_List> datos = new ArrayList<Order_Entry_List>();
-        for(int i = 0; i < misPedidos.length; i++){
-            datos.add(new Order_Entry_List(R.mipmap.ic_person_pin_black_24dp,misPedidos[i][0],misPedidos[i][1]));
+        for (int i = 0; i < misPedidos.length; i++) {
+            datos.add(new Order_Entry_List(R.mipmap.ic_person_pin_black_24dp, misPedidos[i][0], misPedidos[i][1]));
         }
 
-        adapter = new Order_Adapter_List(getApplicationContext(), R.layout.order_list_view, datos){
+        adapter = new Order_Adapter_List(getApplicationContext(), R.layout.order_list_view, datos) {
             @Override
             public void onEntrada(Object entrada, View view) {
                 TextView texto_superior_entrada = (TextView) view.findViewById(R.id.Obra_Pedidos);
@@ -199,16 +214,75 @@ public class Clients extends AppCompatActivity
         lista.setAdapter(adapter);
     }
 
-    private void AccionItemLista(ListView lista, String[][] result){
-        lista.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+    private void AccionItemLista(ListView lista, String[][] result) {
+        lista.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> pariente, View view, int posicion, long id) {
                 Order_Entry_List elegido = (Order_Entry_List) pariente.getItemAtPosition(posicion);
 
-                CharSequence texto = "Seleccionado: " + elegido.get_Titulo() +": "+ elegido.get_Descripcion();
-                Toast toast = Toast.makeText(Clients.this, texto, Toast.LENGTH_LONG);
-                toast.show();
+                //Seccion donde se muestra la informacion del usuario./////////////////////////////
+                CharSequence texto = "Name : " + elegido.get_Titulo() + "\n"+
+                        "Last Name : " + "xxxxxxxx" + "\n"+
+                        "Card Number : "+ "xxxxxxx" + "\n"+
+                        "Place : " + "xxxxxx" + "\n"+
+                        "Born date : " + "xxxx"+ "\n"+
+                        "Telephone : "+ "xxxx";
+
+                AlertDialog.Builder builder1 = new AlertDialog.Builder(Clients.this);
+                builder1.setTitle(elegido.get_Titulo());
+                builder1.setMessage(texto);
+                builder1.setCancelable(true);
+                builder1.setNeutralButton(android.R.string.ok,
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.cancel();
+                            }
+                        });
+                builder1.show();
             }
         });
+
+        lista.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+
+            @Override
+            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
+
+
+                AlertDialog.Builder builder1 = new AlertDialog.Builder(Clients.this);
+                builder1.setTitle("Action");
+                builder1.setMessage("¿What would you like to do?");
+                builder1.setCancelable(true);
+                builder1.setNeutralButton(android.R.string.ok,
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.cancel();
+                            }
+                        });
+                builder1.setPositiveButton("Update",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                siguiente = new Intent(Clients.this,Registry.class);
+                                siguiente.putExtra(
+                                        "Action", "Update");
+
+                                startActivity(siguiente);
+                                dialog.cancel();
+                            }
+                        });
+                builder1.setNegativeButton("Delete",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                //Agregar accion de borrar un cliente.
+                                Toast toast = Toast.makeText(Clients.this, "Accion de borrado", Toast.LENGTH_LONG);
+                                toast.show();
+                                dialog.cancel();
+                            }
+                        });
+                builder1.show();
+                return false;
+            }
+        });
+
     }
+
 }

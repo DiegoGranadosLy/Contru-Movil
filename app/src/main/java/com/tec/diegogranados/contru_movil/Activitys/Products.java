@@ -1,11 +1,13 @@
 package com.tec.diegogranados.contru_movil.Activitys;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.view.MenuItemCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.SearchView;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -17,6 +19,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -33,6 +36,7 @@ public class Products extends AppCompatActivity
 
     Intent siguiente;
     ListView listview;
+    Button button_Create;
     Communicator comunicador;
     Order_Adapter_List adapter;
 
@@ -61,6 +65,7 @@ public class Products extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+        button_Create = (Button)findViewById(R.id.button_Create_Products);
         comunicador = new Communicator();
         comunicador.execute(new String[0][0],new String[0][0],new String[0][0]);
     }
@@ -162,6 +167,7 @@ public class Products extends AppCompatActivity
             //Se llaman los metodos auxiliares del metodo.
             Set_Adapter(listview);
             AccionItemLista(listview, result);
+            AccionButtonCrear();
         }
     }
 
@@ -179,8 +185,14 @@ public class Products extends AppCompatActivity
 
         ArrayList<Order_Entry_List> datos = new ArrayList<Order_Entry_List>();
         for(int i = 0; i < misPedidos.length; i++){
-            datos.add(new Order_Entry_List(R.mipmap.ic_person_pin_black_24dp,misPedidos[i][0],misPedidos[i][1]));
+            if (misPedidos[i][2].equals("Concluido")){
+                datos.add(new Order_Entry_List(R.mipmap.ic_check_black_24dp,misPedidos[i][0],misPedidos[i][1]));
+            }
+            else{
+                datos.add(new Order_Entry_List(R.mipmap.ic_clear_black_24dp,misPedidos[i][0],misPedidos[i][1]));
+            }
         }
+
 
         adapter = new Order_Adapter_List(getApplicationContext(), R.layout.order_list_view, datos){
             @Override
@@ -205,9 +217,75 @@ public class Products extends AppCompatActivity
             public void onItemClick(AdapterView<?> pariente, View view, int posicion, long id) {
                 Order_Entry_List elegido = (Order_Entry_List) pariente.getItemAtPosition(posicion);
 
-                CharSequence texto = "Seleccionado: " + elegido.get_Titulo() +": "+ elegido.get_Descripcion();
-                Toast toast = Toast.makeText(Products.this, texto, Toast.LENGTH_LONG);
-                toast.show();
+                //Seccion donde se muestra la informacion del usuario./////////////////////////////
+                CharSequence texto = "Branch Office : " + "xxxxxxxx" + "\n"+
+                        "Provider : " + "xxxxxxxx" + "\n"+
+                        "Category : "+ "xxxxxxx" + "\n"+
+                        "Exempt : " + "xxxxxx" + "\n"+
+                        "Quantity : " + "xxxx"+ "\n"+
+                        "Description : "+ "xxxx";
+
+                AlertDialog.Builder builder1 = new AlertDialog.Builder(Products.this);
+                builder1.setTitle(elegido.get_Titulo());
+                builder1.setMessage(texto);
+                builder1.setCancelable(true);
+                builder1.setNeutralButton(android.R.string.ok,
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.cancel();
+                            }
+                        });
+                builder1.show();
+            }
+        });
+
+        lista.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+
+            @Override
+            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
+
+                AlertDialog.Builder builder1 = new AlertDialog.Builder(Products.this);
+                builder1.setTitle("Action");
+                builder1.setMessage("¿What would you like to do?");
+                builder1.setCancelable(true);
+                builder1.setNeutralButton(android.R.string.ok,
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.cancel();
+                            }
+                        });
+
+                builder1.setPositiveButton("Update",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                Toast toast = Toast.makeText(Products.this, "Accion de actualizacion", Toast.LENGTH_LONG);
+                                toast.show();
+                                dialog.cancel();
+                            }
+                        });
+
+                builder1.setNegativeButton("Delete",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                Toast toast = Toast.makeText(Products.this, "Accion de borrado", Toast.LENGTH_LONG);
+                                toast.show();
+                                dialog.cancel();
+                            }
+                        });
+                builder1.show();
+
+                return false;
+            }
+        });
+    }
+
+    private void AccionButtonCrear(){
+        button_Create.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                siguiente = new Intent(Products.this, Registry_Product.class);
+                siguiente.putExtra("Action","Add");
+                startActivity(siguiente);
             }
         });
     }

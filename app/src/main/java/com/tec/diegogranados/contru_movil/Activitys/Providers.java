@@ -1,11 +1,13 @@
 package com.tec.diegogranados.contru_movil.Activitys;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.view.MenuItemCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.SearchView;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -208,6 +210,45 @@ public class Providers extends AppCompatActivity
                 CharSequence texto = "Seleccionado: " + elegido.get_Titulo() +": "+ elegido.get_Descripcion();
                 Toast toast = Toast.makeText(Providers.this, texto, Toast.LENGTH_LONG);
                 toast.show();
+            }
+        });
+
+        lista.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+
+            @Override
+            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
+
+                AlertDialog.Builder builder1 = new AlertDialog.Builder(Providers.this);
+                builder1.setTitle("Action");
+                builder1.setMessage("¿What would you like to do?");
+                builder1.setCancelable(true);
+                builder1.setNeutralButton(android.R.string.ok,
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.cancel();
+                            }
+                        });
+
+                builder1.setPositiveButton("Update",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                Toast toast = Toast.makeText(Providers.this, "Accion de actualizacion", Toast.LENGTH_LONG);
+                                toast.show();
+                                dialog.cancel();
+                            }
+                        });
+
+                builder1.setNegativeButton("Delete",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                Toast toast = Toast.makeText(Providers.this, "Accion de borrado", Toast.LENGTH_LONG);
+                                toast.show();
+                                dialog.cancel();
+                            }
+                        });
+                builder1.show();
+
+                return false;
             }
         });
     }

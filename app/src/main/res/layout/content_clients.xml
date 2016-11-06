@@ -13,9 +13,16 @@
     tools:context="com.tec.diegogranados.contru_movil.Activitys.Clients"
     tools:showIn="@layout/app_bar_clients">
 
-    <ListView
-        android:layout_width="match_parent"
+
+    <LinearLayout
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/ListView_Clients" />
+        android:orientation="vertical">
+
+        <ListView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/ListView_Clients" />
+    </LinearLayout>
 
 </RelativeLayout>
