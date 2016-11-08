@@ -2,7 +2,6 @@ package com.tec.diegogranados.contru_movil.Activitys;
 
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -26,10 +25,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.appindexing.Action;
-import com.google.android.gms.appindexing.AppIndex;
-import com.google.android.gms.appindexing.Thing;
-import com.google.android.gms.common.api.GoogleApiClient;
 import com.tec.diegogranados.contru_movil.ListView.Order_Adapter_List;
 import com.tec.diegogranados.contru_movil.ListView.Order_Entry_List;
 import com.tec.diegogranados.contru_movil.R;
@@ -43,11 +38,6 @@ public class Clients extends AppCompatActivity
     ListView listview;
     Communicator comunicador;
     Order_Adapter_List adapter;
-    /**
-     * ATTENTION: This was auto-generated to implement the App Indexing API.
-     * See https://g.co/AppIndexing/AndroidStudio for more information.
-     */
-    private GoogleApiClient client;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,15 +45,6 @@ public class Clients extends AppCompatActivity
         setContentView(R.layout.activity_clients);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -261,10 +242,8 @@ public class Clients extends AppCompatActivity
                 builder1.setPositiveButton("Update",
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
-                                siguiente = new Intent(Clients.this,Registry.class);
-                                siguiente.putExtra(
-                                        "Action", "Update");
-
+                                siguiente = new Intent(Clients.this,Registry_Client.class);
+                                siguiente.putExtra("Action", "Update");
                                 startActivity(siguiente);
                                 dialog.cancel();
                             }

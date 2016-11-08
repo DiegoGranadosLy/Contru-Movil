@@ -19,6 +19,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -37,6 +38,7 @@ public class Providers extends AppCompatActivity
     ListView listview;
     Communicator comunicador;
     Order_Adapter_List adapter;
+    Button button_Create_Providers;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,15 +46,6 @@ public class Providers extends AppCompatActivity
         setContentView(R.layout.activity_providers);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -62,6 +55,17 @@ public class Providers extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        button_Create_Providers = (Button)findViewById(R.id.button_Create_Providers);
+
+        button_Create_Providers.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                siguiente = new Intent(Providers.this, Registry_Provider.class);
+                siguiente.putExtra("Action","Add");
+                startActivity(siguiente);
+            }
+        });
 
         comunicador = new Communicator();
         comunicador.execute(new String[0][0],new String[0][0],new String[0][0]);
@@ -232,8 +236,9 @@ public class Providers extends AppCompatActivity
                 builder1.setPositiveButton("Update",
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
-                                Toast toast = Toast.makeText(Providers.this, "Accion de actualizacion", Toast.LENGTH_LONG);
-                                toast.show();
+                                siguiente = new Intent(Providers.this, Registry_Provider.class);
+                                siguiente.putExtra("Action","Update");
+                                startActivity(siguiente);
                                 dialog.cancel();
                             }
                         });

@@ -13,12 +13,15 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.tec.diegogranados.contru_movil.R;
+import com.tec.diegogranados.contru_movil.Threads.Thread_Sync;
 
 public class Main_Page_App extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
+    Thread_Sync thread_sync;
     Intent siguiente;
 
     @Override
@@ -32,8 +35,9 @@ public class Main_Page_App extends AppCompatActivity
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                Snackbar.make(view, "Sinchronizing", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
+                actionFloatingButton();
             }
         });
 
@@ -78,34 +82,62 @@ public class Main_Page_App extends AppCompatActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         int id = item.getItemId();
 
-        if (id == R.id.nav_clients) {
-            siguiente = new Intent(Main_Page_App.this, Clients.class);
-            startActivity(siguiente);
-        } else if (id == R.id.nav_products) {
-            siguiente = new Intent(Main_Page_App.this, Products.class);
-            startActivity(siguiente);
-        } else if (id == R.id.nav_orders) {
-            siguiente = new Intent(Main_Page_App.this, Orders.class);
-            startActivity(siguiente);
-        } else if (id == R.id.nav_providers) {
-            siguiente = new Intent(Main_Page_App.this, Providers.class);
-            startActivity(siguiente);
-        } else if (id == R.id.nav_categories) {
-            siguiente = new Intent(Main_Page_App.this, Categories.class);
-            startActivity(siguiente);
-        } else if (id == R.id.nav_vendors) {
-            siguiente = new Intent(Main_Page_App.this, Vendors.class);
-            startActivity(siguiente);
-        } else if (id == R.id.nav_mainpage) {
-            siguiente = new Intent(Main_Page_App.this, Main_Page_App.class);
-            startActivity(siguiente);
-        } else if (id == R.id.nav_exit) {
-            siguiente = new Intent(Main_Page_App.this, MainActivity.class);
-            startActivity(siguiente);
+        if (Thread_Sync.getSync()==true){
+            Toast toast = Toast.makeText(getApplicationContext(),
+                    "Aplicacion Sincronizando con la base de datos por favor espere.", Toast.LENGTH_LONG);
+            toast.show();
+        }
+        else{
+            if (id == R.id.nav_clients) {
+                siguiente = new Intent(Main_Page_App.this, Clients.class);
+                startActivity(siguiente);
+            }
+            else if (id == R.id.nav_products) {
+                siguiente = new Intent(Main_Page_App.this, Products.class);
+                startActivity(siguiente);
+            } else if (id == R.id.nav_orders) {
+                siguiente = new Intent(Main_Page_App.this, Orders.class);
+                startActivity(siguiente);
+            } else if (id == R.id.nav_providers) {
+                siguiente = new Intent(Main_Page_App.this, Providers.class);
+                startActivity(siguiente);
+            } else if (id == R.id.nav_categories) {
+                siguiente = new Intent(Main_Page_App.this, Categories.class);
+                startActivity(siguiente);
+            } else if (id == R.id.nav_vendors) {
+                siguiente = new Intent(Main_Page_App.this, Vendors.class);
+                startActivity(siguiente);
+            } else if (id == R.id.nav_mainpage) {
+                siguiente = new Intent(Main_Page_App.this, Main_Page_App.class);
+                startActivity(siguiente);
+           } else if (id == R.id.nav_exit) {
+                siguiente = new Intent(Main_Page_App.this, MainActivity.class);
+                startActivity(siguiente);
+            }
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+
+    private void actionFloatingButton(){
+        Boolean testvar = Thread_Sync.getSync();
+        if (testvar==null){
+            thread_sync = new Thread_Sync(getApplicationContext());
+            System.out.println("actionFloatingButton");
+            thread_sync.start();
+        }
+        if (testvar==true){
+            thread_sync = new Thread_Sync(getApplicationContext());
+            System.out.println("Ya hubo una sincronizacion");
+            thread_sync.start();
+        }
+        if (testvar==false){
+            thread_sync = new Thread_Sync(getApplicationContext());
+            System.out.println("Hay que comenzar la sincronizacion");
+            thread_sync.start();
+        }
     }
 }

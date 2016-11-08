@@ -19,6 +19,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -27,6 +28,7 @@ import android.widget.Toast;
 import com.tec.diegogranados.contru_movil.ListView.Order_Adapter_List;
 import com.tec.diegogranados.contru_movil.ListView.Order_Entry_List;
 import com.tec.diegogranados.contru_movil.R;
+import com.tec.diegogranados.contru_movil.Threads.Thread_Sync;
 
 import java.util.ArrayList;
 
@@ -37,6 +39,7 @@ public class Categories extends AppCompatActivity
     ListView listview;
     Communicator comunicador;
     Order_Adapter_List adapter;
+    Button button_Create_Categories;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,15 +47,6 @@ public class Categories extends AppCompatActivity
         setContentView(R.layout.activity_categories);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -62,6 +56,16 @@ public class Categories extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        button_Create_Categories = (Button)findViewById(R.id.button_Create_Categories);
+        button_Create_Categories.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                siguiente = new Intent(Categories.this, Registry_Category.class);
+                siguiente.putExtra("Action","Add");
+                startActivity(siguiente);
+            }
+        });
 
         comunicador = new Communicator();
         comunicador.execute(new String[0][0],new String[0][0],new String[0][0]);
@@ -208,9 +212,19 @@ public class Categories extends AppCompatActivity
             public void onItemClick(AdapterView<?> pariente, View view, int posicion, long id) {
                 Order_Entry_List elegido = (Order_Entry_List) pariente.getItemAtPosition(posicion);
 
-                CharSequence texto = "Seleccionado: " + elegido.get_Titulo() +": "+ elegido.get_Descripcion();
-                Toast toast = Toast.makeText(Categories.this, texto, Toast.LENGTH_LONG);
-                toast.show();
+                CharSequence texto = "Aqui va la descripcion de la categoria";
+
+                AlertDialog.Builder builder1 = new AlertDialog.Builder(Categories.this);
+                builder1.setTitle(elegido.get_Titulo());
+                builder1.setMessage(texto);
+                builder1.setCancelable(true);
+                builder1.setNeutralButton(android.R.string.ok,
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.cancel();
+                            }
+                        });
+                builder1.show();
             }
         });
 
@@ -233,9 +247,9 @@ public class Categories extends AppCompatActivity
                 builder1.setPositiveButton("Update",
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
-                                Toast toast = Toast.makeText(Categories.this, "Accion de actualizacion", Toast.LENGTH_LONG);
-                                toast.show();
-                                dialog.cancel();
+                                siguiente = new Intent(Categories.this, Registry_Category.class);
+                                siguiente.putExtra("Action","Update");
+                                startActivity(siguiente);
                             }
                         });
 
@@ -250,6 +264,15 @@ public class Categories extends AppCompatActivity
                 builder1.show();
 
                 return false;
+            }
+        });
+
+        button_Create_Categories.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                siguiente = new Intent(Categories.this, Registry_Category.class);
+                siguiente.putExtra("Action","Add");
+                startActivity(siguiente);
             }
         });
     }

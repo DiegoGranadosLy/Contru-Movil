@@ -47,15 +47,6 @@ public class Products extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
-
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -258,8 +249,9 @@ public class Products extends AppCompatActivity
                 builder1.setPositiveButton("Update",
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
-                                Toast toast = Toast.makeText(Products.this, "Accion de actualizacion", Toast.LENGTH_LONG);
-                                toast.show();
+                                siguiente = new Intent(Products.this,Registry_Product.class);
+                                siguiente.putExtra("Action", "Update");
+                                startActivity(siguiente);
                                 dialog.cancel();
                             }
                         });

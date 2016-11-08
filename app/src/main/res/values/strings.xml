@@ -13,7 +13,7 @@
     <string name="Button_Check_In_Login">Check In</string>
     <!-- Fin Activity Login-->
 
-    <!-- Inicio Activity Registry-->
+    <!-- Inicio Activity Registry_Client-->
     <string name="Name_Registry">Enter your name</string>
     <string name="Last_Name_Registry">Enter your last name</string>
     <string name="Nickname_Registry">Enter your Nickname</string>
@@ -24,7 +24,7 @@
     <string name="Password_Registry">Enter your password</string>
     <string name="Button_Date_Registry">Born Date</string>
     <string name="Button_Check_In_Registry">Check in</string>
-    <!-- Fin Activity Registry-->
+    <!-- Fin Activity Registry_Client-->
 
     <!-- -->
     <string name="Main_Nav_Drawer_MainPage">Main Page</string>
@@ -61,6 +61,22 @@
     <string name="Quantity_Registry_Product">Quantity</string>
     <!-- -->
 
+    <!-- Inicio Activity Registry_Provider-->
+    <string name="Name_Registry_Provider">Enter your name</string>
+    <string name="Last_Name_Registry_Provider">Enter your last name</string>
+    <string name="Nickname_Registry_Provider">Enter your Nickname</string>
+    <string name="Card_Number_Registry_Provider">Enter your card number</string>
+    <string name="Date_Registry_Provider">Enter your start date</string>
+    <string name="Template_Date_Registry_Provider">DD/MM/AAAA</string>
+    <string name="Button_Date_Registry_Provider">Born Date</string>
+    <string name="Button_Check_In_Registry_Provider">Check in</string>
+    <!-- Fin Activity Registry_Provider-->
+
+    <!-- -->
+    <string name="Name_Registry_Category">Category name</string>
+    <string name="Description_Registry_Category">Description of Category</string>
+    <!-- -->
+
     <!-- String para botones de creacion-->
     <string name="CreateButton">Create</string>
     <!-- -->
@@ -70,7 +86,6 @@
 
     <!-- Inicio de claves para paso de parametros-->
     <string name="Action_Registry">ActionRegistry</string>
-
     <!-- Fin de claves para paso de parametros-->
 </resources>
 

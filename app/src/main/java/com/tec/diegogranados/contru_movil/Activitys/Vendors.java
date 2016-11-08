@@ -46,15 +46,6 @@ public class Vendors extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
-
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -207,20 +198,11 @@ public class Vendors extends AppCompatActivity
             public void onItemClick(AdapterView<?> pariente, View view, int posicion, long id) {
                 Order_Entry_List elegido = (Order_Entry_List) pariente.getItemAtPosition(posicion);
 
-                CharSequence texto = "Seleccionado: " + elegido.get_Titulo() +": "+ elegido.get_Descripcion();
-                Toast toast = Toast.makeText(Vendors.this, texto, Toast.LENGTH_LONG);
-                toast.show();
-            }
-        });
-
-        lista.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-
-            @Override
-            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
+                CharSequence texto = "Aqui va la informacion de los vendedores";
 
                 AlertDialog.Builder builder1 = new AlertDialog.Builder(Vendors.this);
-                builder1.setTitle("Action");
-                builder1.setMessage("¿What would you like to do?");
+                builder1.setTitle(elegido.get_Titulo());
+                builder1.setMessage(texto);
                 builder1.setCancelable(true);
                 builder1.setNeutralButton(android.R.string.ok,
                         new DialogInterface.OnClickListener() {
@@ -228,27 +210,7 @@ public class Vendors extends AppCompatActivity
                                 dialog.cancel();
                             }
                         });
-
-                builder1.setPositiveButton("Update",
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                Toast toast = Toast.makeText(Vendors.this, "Accion de actualizacion", Toast.LENGTH_LONG);
-                                toast.show();
-                                dialog.cancel();
-                            }
-                        });
-
-                builder1.setNegativeButton("Delete",
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                Toast toast = Toast.makeText(Vendors.this, "Accion de borrado", Toast.LENGTH_LONG);
-                                toast.show();
-                                dialog.cancel();
-                            }
-                        });
                 builder1.show();
-
-                return false;
             }
         });
     }

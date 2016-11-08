@@ -118,7 +118,7 @@
                 android:gravity="center_horizontal">
 
                 <TextView
-                    android:id = "@+id/button_Category_Registry_Product"
+                    android:id = "@+id/TextView_Category_Registry_Product"
                     android:layout_marginTop="10dp"
                     android:layout_width="wrap_content"
                     android:layout_height="25dp"
@@ -154,12 +154,12 @@
 
                 >
             <RadioButton
-                android:id="@+id/rdbOne"
+                android:id="@+id/rdbYes"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Yes"/>
             <RadioButton
-                android:id="@+id/rdbTwo"
+                android:id="@+id/rdbNo"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="No"/>
@@ -180,12 +180,12 @@
                 android:layout_marginBottom="20dp"
                 android:layout_marginTop="5dp"
                 android:inputType="number"
-                android:id="@+id/TextView_Quantity_Registry_Product"
+                android:id="@+id/EditText_Quantity_Registry_Product"
                 android:gravity="center_horizontal"
                 />
 
             <Button
-                android:id = "@+id/button_Registry_Registrar"
+                android:id = "@+id/button_Registry_Product_Registrar"
                 android:layout_width = "match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/Button_Check_In_Registry"

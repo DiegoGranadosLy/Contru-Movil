@@ -19,7 +19,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".Activitys.Login" />
-        <activity android:name=".Activitys.Registry" />
+        <activity android:name=".Activitys.Registry_Client" />
         <activity
             android:name=".Activitys.Main_Page_App"
             android:label="@string/title_activity_main__page__app"
@@ -56,7 +56,9 @@
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
 
-        <activity android:name=".Activitys.Registry_Product"></activity>
+        <activity android:name=".Activitys.Registry_Product" />
+        <activity android:name=".Activitys.Registry_Category" />
+        <activity android:name=".Activitys.Registry_Provider"></activity>
     </application>
 
 </manifest>

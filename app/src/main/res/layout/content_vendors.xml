@@ -13,21 +13,9 @@
     tools:context="com.tec.diegogranados.contru_movil.Activitys.Vendors"
     tools:showIn="@layout/app_bar_vendors">
 
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
-        <Button
-            android:id = "@+id/button_Create_Vendors"
-            android:layout_width = "match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/CreateButton"
-            />
-
-        <ListView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/ListView_vendors" />
-    </LinearLayout>
+     <ListView
+         android:layout_width="match_parent"
+         android:layout_height="wrap_content"
+         android:id="@+id/ListView_vendors" />
 
 </RelativeLayout>
