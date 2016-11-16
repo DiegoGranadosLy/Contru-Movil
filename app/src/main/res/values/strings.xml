@@ -17,9 +17,10 @@
     <string name="Name_Registry">Enter your name</string>
     <string name="Last_Name_Registry">Enter your last name</string>
     <string name="Nickname_Registry">Enter your Nickname</string>
-    <string name="Card_Number_Registry">Enter your card number</string>
+    <string name="Code_Registry">Enter your code</string>
+    <string name="Place_Registry">Enter your location</string>
     <string name="Date_Registry">Enter your start date</string>
-    <string name="Template_Date_Registry">DD/MM/AAAA</string>
+    <string name="Template_Date_Registry">AAAA-MM-DD 00:00:00</string>
     <string name="Telephone_Registry">Enter your telephone</string>
     <string name="Password_Registry">Enter your password</string>
     <string name="Button_Date_Registry">Born Date</string>
