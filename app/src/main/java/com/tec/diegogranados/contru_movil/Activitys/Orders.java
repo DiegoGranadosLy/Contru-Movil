@@ -19,11 +19,14 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.tec.diegogranados.contru_movil.Beans.Orden;
+import com.tec.diegogranados.contru_movil.Beans.Persona;
 import com.tec.diegogranados.contru_movil.ListView.Order_Adapter_List;
 import com.tec.diegogranados.contru_movil.ListView.Order_Entry_List;
 import com.tec.diegogranados.contru_movil.R;
@@ -38,6 +41,9 @@ public class Orders extends AppCompatActivity
     ListView listview;
     Communicator comunicador;
     Order_Adapter_List adapter;
+    Button button_Create_Orders;
+    Orden[] ordenes;
+    boolean accion;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,6 +61,7 @@ public class Orders extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+        button_Create_Orders = (Button) findViewById(R.id.button_Create_Orders);
         comunicador = new Communicator();
         comunicador.execute(new String[0][0],new String[0][0],new String[0][0]);
     }
@@ -240,6 +247,15 @@ public class Orders extends AppCompatActivity
                 builder1.show();
 
                 return false;
+            }
+        });
+
+        button_Create_Orders.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                siguiente = new Intent(Orders.this, Registry_Order.class);
+                siguiente.putExtra("Action","Add");
+                startActivity(siguiente);
             }
         });
     }

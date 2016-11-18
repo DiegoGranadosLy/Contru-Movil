@@ -78,6 +78,16 @@
     <string name="Button_Check_In_Registry_Provider">Check in</string>
     <!-- Fin Activity Registry_Provider-->
 
+    <!-- Inicio Activity Registry_Order-->
+    <string name="Branch_Registry_Order">Branch Office</string>
+    <string name="Client_Registry_Order">Client name</string>
+    <string name="Telephone_Registry_Order">Enter your telephone</string>
+    <string name="Products_Registry_Order">List of Products</string>
+    <string name="Time_Registry_Order">Hour of sale</string>
+    <string name="Add_Registry_Order">Add</string>
+    <string name="Buy_Registry_Order">Buy</string>
+    <!-- Fin Activity Registry_Order-->
+
     <!-- -->
     <string name="Name_Registry_Category">Category name</string>
     <string name="Description_Registry_Category">Description of Category</string>

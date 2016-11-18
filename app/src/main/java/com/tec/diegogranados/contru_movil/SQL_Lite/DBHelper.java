@@ -3,6 +3,12 @@ package com.tec.diegogranados.contru_movil.SQL_Lite;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.widget.Toast;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
 /**
  * Created by Diego Granados on 09/11/2016.
@@ -21,23 +27,16 @@ public class DBHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
 
         db.execSQL(DataBaseManager.CT_PERSONA);
-//        db.execSQL(DataBaseManager.CT_PRODUCTO);
-//        db.execSQL(DataBaseManager.CT_PEDIDO);
-//        db.execSQL(DataBaseManager.CT_CATEGORIA);
-//        db.execSQL(DataBaseManager.CT_ORDEN);
-//        db.execSQL(DataBaseManager.CT_USUARIO);
-//        db.execSQL(DataBaseManager.CT_ROL);
-//        db.execSQL(DataBaseManager.CT_SUCURSAL);
-//
-//        db.execSQL(DataBaseManager.AT_PRODUCT_ADD_1);
-//        db.execSQL(DataBaseManager.AT_PRODUCT_ADD_2);
-//        db.execSQL(DataBaseManager.AT_PRODUCT_ADD_3);
-//        db.execSQL(DataBaseManager.AT_PEDIDO_ADD_1);
-//        db.execSQL(DataBaseManager.AT_PEDIDO_ADD_2);
-//        db.execSQL(DataBaseManager.AT_ORDEN_ADD_1);
-//        db.execSQL(DataBaseManager.AT_ORDEN_ADD_2);
-//        db.execSQL(DataBaseManager.AT_USUARIO_ADD_1);
-//        db.execSQL(DataBaseManager.AT_USUARIO_ADD_2);
+        db.execSQL(DataBaseManager.CT_PRODUCTO);
+        db.execSQL(DataBaseManager.CT_PEDIDO);
+        db.execSQL(DataBaseManager.CT_CATEGORIA);
+        db.execSQL(DataBaseManager.CT_ORDEN);
+        db.execSQL(DataBaseManager.CT_USUARIO);
+        db.execSQL(DataBaseManager.CT_ROL);
+        db.execSQL(DataBaseManager.CT_SUCURSAL);
+        db.execSQL(DataBaseManager.CT_ACT_MATUTINA);
+        db.execSQL(DataBaseManager.CT_OP_SIN_CONEXION);
+
     }
 
     @Override
