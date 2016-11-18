@@ -4,8 +4,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.SearchView;
@@ -25,8 +23,12 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
+import com.tec.diegogranados.contru_movil.Beans.Persona;
+import com.tec.diegogranados.contru_movil.Beans.Result;
 import com.tec.diegogranados.contru_movil.ListView.Order_Adapter_List;
 import com.tec.diegogranados.contru_movil.ListView.Order_Entry_List;
+import com.tec.diegogranados.contru_movil.Post.Communicator_Database;
 import com.tec.diegogranados.contru_movil.R;
 
 import java.util.ArrayList;
@@ -38,6 +40,8 @@ public class Clients extends AppCompatActivity
     ListView listview;
     Communicator comunicador;
     Order_Adapter_List adapter;
+    Persona[] persona;
+    boolean accion;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,6 +59,7 @@ public class Clients extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+        accion =false;
         comunicador = new Communicator();
         comunicador.execute(new String[0][0], new String[0][0], new String[0][0]);
 
@@ -148,34 +153,55 @@ public class Clients extends AppCompatActivity
 
         @Override
         protected String[][] doInBackground(String[][]... strings) {
+            listview = (ListView) findViewById(R.id.ListView_Clients);
+            //Se llaman los metodos auxiliares del metodo.
+            Set_Adapter(listview);
             return new String[0][];
         }
 
 
         @Override
         protected void onPostExecute(String[][] result) {
-            listview = (ListView) findViewById(R.id.ListView_Clients);
-            //Se llaman los metodos auxiliares del metodo.
-            Set_Adapter(listview);
             AccionItemLista(listview, result);
         }
     }
 
+    private Persona[] getClientes(){
+
+        boolean connection = Communicator_Database.isOnline(getApplicationContext());
+        if (connection == true) {
+            Communicator_Database com = new Communicator_Database();
+            String message = com.peticion("//show//", "{\"type\":\"clients\"}");
+
+            Gson gson = new Gson();
+            persona = gson.fromJson(message, Persona[].class);
+
+        }
+        else{
+            Persona a = new Persona();
+            a.id = "321654987";a.nombre = "Javier";a.apellido = "Sancho";
+            a.residencia="San Jose"; a.f_nacimiento = "13/3/1994";a.telefono = 88447766;
+            Persona b = new Persona();
+            b.id = "123456789";b.nombre = "Ernesto";b.apellido = "Ulate";
+            b.residencia="San Carlos"; b.f_nacimiento = "1/10/1995";b.telefono = 88563266;
+            Persona c = new Persona();
+            c.id = "304860692";c.nombre = "Diego";c.apellido = "Granados";
+            c.residencia="Cartago"; c.f_nacimiento = "13/5/1995";c.telefono = 88447766;
+            Persona d = new Persona();
+            d.id = "304860695";d.nombre = "Fabian";d.apellido = "Astorga";
+            d.residencia="Oreamuno"; d.f_nacimiento = "13/5/1996";d.telefono = 61447766;
+            persona = new Persona[]{a, b, c, d};
+        }
+        return persona;
+    }
+
     private void Set_Adapter(ListView lista) {
 
-        String[][] misPedidos = {{"Tecnologico", "Cimientos", "Concluido"}
-                , {"UNA", "Paredes", "Incompleto"}, {"UCR", "Cielo", "Concluido"}
-                , {"HP", "Instalacion Electrica", "Incompleto"}, {"Teradyne", "Instalacion Pluvial", "Incompleto"}
-                , {"Casa Diego", "Techo", "Concluido"}, {"Casa Alerto", "Mueble Pintura", "Incompleto"}
-                , {"El Aguila", "Tuberia", "75", "Incompleto"}, {"Casa Enso", "Canoas", "Incompleto"}
-                , {"UNA", "Paredes", "Incompleto"}, {"UCR", "Cielo", "Concluido"}
-                , {"HP", "Instalacion Electrica", "Incompleto"}, {"Teradyne", "Instalacion Pluvial", "Incompleto"}
-                , {"Casa Diego", "Techo", "Concluido"}, {"Casa Alerto", "Mueble Pintura", "Incompleto"}
-                , {"El Aguila", "Tuberia", "75", "Incompleto"}, {"Casa Enso", "Canoas", "Incompleto"}};
+        persona = getClientes();
 
         ArrayList<Order_Entry_List> datos = new ArrayList<Order_Entry_List>();
-        for (int i = 0; i < misPedidos.length; i++) {
-            datos.add(new Order_Entry_List(R.mipmap.ic_person_pin_black_24dp, misPedidos[i][0], misPedidos[i][1]));
+        for (int i = 0; i < persona.length; i++) {
+            datos.add(new Order_Entry_List(R.mipmap.ic_person_pin_black_24dp, persona[i].nombre, persona[i].residencia));
         }
 
         adapter = new Order_Adapter_List(getApplicationContext(), R.layout.order_list_view, datos) {
@@ -202,12 +228,12 @@ public class Clients extends AppCompatActivity
                 Order_Entry_List elegido = (Order_Entry_List) pariente.getItemAtPosition(posicion);
 
                 //Seccion donde se muestra la informacion del usuario./////////////////////////////
-                CharSequence texto = "Name : " + elegido.get_Titulo() + "\n"+
-                        "Last Name : " + "xxxxxxxx" + "\n"+
-                        "Card Number : "+ "xxxxxxx" + "\n"+
-                        "Place : " + "xxxxxx" + "\n"+
-                        "Born date : " + "xxxx"+ "\n"+
-                        "Telephone : "+ "xxxx";
+                CharSequence texto = "Name : " + persona[posicion].nombre + "\n"+
+                        "Last Name : " + persona[posicion].apellido + "\n"+
+                        "Card Number : "+ persona[posicion].id + "\n"+
+                        "Place : " + persona[posicion].residencia + "\n"+
+                        "Born date : " + persona[posicion].f_nacimiento + "\n"+
+                        "Telephone : "+ persona[posicion].telefono;
 
                 AlertDialog.Builder builder1 = new AlertDialog.Builder(Clients.this);
                 builder1.setTitle(elegido.get_Titulo());
@@ -226,7 +252,7 @@ public class Clients extends AppCompatActivity
         lista.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
 
             @Override
-            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
+            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, final long l) {
 
 
                 AlertDialog.Builder builder1 = new AlertDialog.Builder(Clients.this);
@@ -244,6 +270,12 @@ public class Clients extends AppCompatActivity
                             public void onClick(DialogInterface dialog, int id) {
                                 siguiente = new Intent(Clients.this,Registry_Client.class);
                                 siguiente.putExtra("Action", "Update");
+                                siguiente.putExtra("id", persona[(int) l].id);
+                                siguiente.putExtra("nombre", persona[(int) l].nombre);
+                                siguiente.putExtra("apellido", persona[(int) l].apellido);
+                                siguiente.putExtra("residencia", persona[(int) l].residencia);
+                                siguiente.putExtra("f_nacimiento", persona[(int) l].f_nacimiento);
+                                siguiente.putExtra("telefono", Integer.toString(persona[(int) l].telefono));
                                 startActivity(siguiente);
                                 dialog.cancel();
                             }
@@ -252,8 +284,8 @@ public class Clients extends AppCompatActivity
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
                                 //Agregar accion de borrar un cliente.
-                                Toast toast = Toast.makeText(Clients.this, "Accion de borrado", Toast.LENGTH_LONG);
-                                toast.show();
+                                ComDelete del = new ComDelete(persona[(int) l]);
+                                del.execute();
                                 dialog.cancel();
                             }
                         });
@@ -262,6 +294,65 @@ public class Clients extends AppCompatActivity
             }
         });
 
+    }
+
+
+    public class ComDelete extends AsyncTask<String[][], String[][], String[][]> {
+        Persona persona;
+        public ComDelete(Persona pPersona) {
+            persona = pPersona;
+        }
+
+        @Override
+        protected String[][] doInBackground(String[][]... strings) {
+            if (Communicator_Database.isOnline(getApplicationContext())){
+                if (accionDeleteEnBase(persona))
+                    accion=true;
+                else{
+                    if (accionDeleteEnTelefono(persona))
+                        accion=true;
+                    else
+                        accion=false;
+                }
+            }
+            else{
+                if (accionDeleteEnTelefono(persona))
+                    accion=true;
+                else
+                    accion=false;
+            }
+            return new String[0][0];
+        }
+
+        @Override
+        protected void onPostExecute(String[][] result) {
+            if (accion == true){
+                siguiente = new Intent(getApplicationContext(),Clients.class);
+                startActivity(siguiente);
+            }
+            else{
+                Toast toast = Toast.makeText(Clients.this,
+                        "We cannot delete a client in this moment.", Toast.LENGTH_LONG);
+                toast.show();
+            }
+        }
+    }
+
+    //Metodo que borra un elemento de la base de datos.
+    private boolean accionDeleteEnBase(Persona persona){
+        return true;
+    }
+
+    //Metodo que borra un elemento de la base de datos del telefono.
+    private boolean accionDeleteEnTelefono(Persona persona){
+        Communicator_Database com = new Communicator_Database();
+
+        Gson gson = new Gson();
+        String message = com.peticion("//control//", "{\"operation\":\"delete\",\"type\":\"product\"" +
+                ",\"jsonObject\":"+ gson.toJson(persona) +"}");
+
+        Result Resultado = gson.fromJson(message, Result.class);
+        return Resultado.success;
     }
 
 }

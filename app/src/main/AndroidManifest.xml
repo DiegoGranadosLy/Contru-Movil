@@ -58,7 +58,8 @@
 
         <activity android:name=".Activitys.Registry_Product" />
         <activity android:name=".Activitys.Registry_Category" />
-        <activity android:name=".Activitys.Registry_Provider"></activity>
+        <activity android:name=".Activitys.Registry_Provider" />
+        <activity android:name=".Registry_Order"></activity>
     </application>
 
 </manifest>

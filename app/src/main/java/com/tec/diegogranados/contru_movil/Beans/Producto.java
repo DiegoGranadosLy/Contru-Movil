@@ -10,7 +10,7 @@ public class Producto {
     public String descripcion;
     public int precio;
     public int disponible;
-    public int id_sucursal;
-    public String id_proveedor;
-    public int id_categoria;
+    public String sucursal;
+    public String proveedor;
+    public String categoria;
 }

@@ -4,8 +4,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.SearchView;
@@ -24,8 +22,11 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
+import com.tec.diegogranados.contru_movil.Beans.Persona;
 import com.tec.diegogranados.contru_movil.ListView.Order_Adapter_List;
 import com.tec.diegogranados.contru_movil.ListView.Order_Entry_List;
+import com.tec.diegogranados.contru_movil.Post.Communicator_Database;
 import com.tec.diegogranados.contru_movil.R;
 
 import java.util.ArrayList;
@@ -38,6 +39,8 @@ public class Vendors extends AppCompatActivity
     ListView listview;
     Communicator comunicador;
     Order_Adapter_List adapter;
+    Persona[] vendedores;
+    boolean accion;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,6 +58,7 @@ public class Vendors extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+        accion =false;
         comunicador = new Communicator();
         comunicador.execute(new String[0][0],new String[0][0],new String[0][0]);
     }
@@ -145,35 +149,56 @@ public class Vendors extends AppCompatActivity
 
         @Override
         protected String[][] doInBackground(String[][]... strings) {
+            listview = (ListView) findViewById(R.id.ListView_vendors);
+            //Se llaman los metodos auxiliares del metodo.
+            Set_Adapter(listview);
             return new String[0][];
         }
 
 
         @Override
         protected void onPostExecute(String[][] result) {
-            listview = (ListView) findViewById(R.id.ListView_vendors);
-            //Se llaman los metodos auxiliares del metodo.
-            Set_Adapter(listview);
             AccionItemLista(listview, result);
         }
     }
 
+    private Persona[] getClientes(){
+
+        boolean connection = Communicator_Database.isOnline(getApplicationContext());
+        if (connection == true) {
+            Communicator_Database com = new Communicator_Database();
+            String message = com.peticion("//show//", "{\"type\":\"sellers\"}");
+
+            Gson gson = new Gson();
+            vendedores = gson.fromJson(message, Persona[].class);
+
+        }
+        else{
+            Persona a = new Persona();
+            a.id = "321654987";a.nombre = "Javier";a.apellido = "Sancho";
+            a.residencia="San Jose"; a.f_nacimiento = "13/3/1994";a.telefono = 88447766;
+            Persona b = new Persona();
+            b.id = "123456789";b.nombre = "Ernesto";b.apellido = "Ulate";
+            b.residencia="San Carlos"; b.f_nacimiento = "1/10/1995";b.telefono = 88563266;
+            Persona c = new Persona();
+            c.id = "304860692";c.nombre = "Diego";c.apellido = "Granados";
+            c.residencia="Cartago"; c.f_nacimiento = "13/5/1995";c.telefono = 88447766;
+            Persona d = new Persona();
+            d.id = "304860695";d.nombre = "Fabian";d.apellido = "Astorga";
+            d.residencia="Oreamuno"; d.f_nacimiento = "13/5/1996";d.telefono = 61447766;
+            vendedores = new Persona[]{a, b, c, d};
+        }
+        return vendedores;
+    }
+
     private void Set_Adapter(ListView lista){
 
-        String[][] misPedidos ={{"Tecnologico","Cimientos","Concluido"}
-                ,{"UNA","Paredes","Incompleto"},{"UCR","Cielo","Concluido"}
-                ,{"HP","Instalacion Electrica","Incompleto"},{"Teradyne","Instalacion Pluvial","Incompleto"}
-                ,{"Casa Diego","Techo","Concluido"},{"Casa Alerto","Mueble Pintura","Incompleto"}
-                ,{"El Aguila","Tuberia","75","Incompleto"},{"Casa Enso","Canoas","Incompleto"}
-                ,{"UNA","Paredes","Incompleto"},{"UCR","Cielo","Concluido"}
-                ,{"HP","Instalacion Electrica","Incompleto"},{"Teradyne","Instalacion Pluvial","Incompleto"}
-                ,{"Casa Diego","Techo","Concluido"},{"Casa Alerto","Mueble Pintura","Incompleto"}
-                ,{"El Aguila","Tuberia","75","Incompleto"},{"Casa Enso","Canoas","Incompleto"}};
+        vendedores = getClientes();
 
         ArrayList<Order_Entry_List> datos = new ArrayList<Order_Entry_List>();
-        for(int i = 0; i < misPedidos.length; i++){
-                datos.add(new Order_Entry_List(R.mipmap.ic_person_pin_black_24dp,misPedidos[i][0],misPedidos[i][1]));
-            }
+        for (int i = 0; i < vendedores.length; i++) {
+            datos.add(new Order_Entry_List(R.mipmap.ic_person_pin_black_24dp, vendedores[i].nombre, vendedores[i].residencia));
+        }
 
         adapter = new Order_Adapter_List(getApplicationContext(), R.layout.order_list_view, datos){
             @Override
@@ -198,7 +223,12 @@ public class Vendors extends AppCompatActivity
             public void onItemClick(AdapterView<?> pariente, View view, int posicion, long id) {
                 Order_Entry_List elegido = (Order_Entry_List) pariente.getItemAtPosition(posicion);
 
-                CharSequence texto = "Aqui va la informacion de los vendedores";
+                CharSequence texto = "Name : " + vendedores[posicion].nombre + "\n"+
+                        "Last Name : " + vendedores[posicion].apellido + "\n"+
+                        "Card Number : "+ vendedores[posicion].id + "\n"+
+                        "Place : " + vendedores[posicion].residencia + "\n"+
+                        "Born date : " + vendedores[posicion].f_nacimiento + "\n"+
+                        "Telephone : "+ vendedores[posicion].telefono;
 
                 AlertDialog.Builder builder1 = new AlertDialog.Builder(Vendors.this);
                 builder1.setTitle(elegido.get_Titulo());

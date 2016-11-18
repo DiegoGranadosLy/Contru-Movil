@@ -13,6 +13,11 @@
     <string name="Button_Check_In_Login">Check In</string>
     <!-- Fin Activity Login-->
 
+    <!-- Inicio Activity Main Page App-->
+    <string name="Name_Main_Page">Username</string>
+    <string name="Access_Main_Page">Level of access</string>
+    <!-- Fin Activity Main Page App-->
+
     <!-- Inicio Activity Registry_Client-->
     <string name="Name_Registry">Enter your name</string>
     <string name="Last_Name_Registry">Enter your last name</string>
@@ -65,7 +70,7 @@
     <!-- Inicio Activity Registry_Provider-->
     <string name="Name_Registry_Provider">Enter your name</string>
     <string name="Last_Name_Registry_Provider">Enter your last name</string>
-    <string name="Nickname_Registry_Provider">Enter your Nickname</string>
+    <string name="Place_Registry_Provider">Enter your Nickname</string>
     <string name="Card_Number_Registry_Provider">Enter your card number</string>
     <string name="Date_Registry_Provider">Enter your start date</string>
     <string name="Template_Date_Registry_Provider">DD/MM/AAAA</string>

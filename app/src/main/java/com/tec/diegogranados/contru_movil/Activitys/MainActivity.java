@@ -58,6 +58,7 @@ public class MainActivity extends AppCompatActivity {
         Login_Main.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                System.out.println("Ruta del archivo SQLITE: "+DBM.db.getPageSize());
                 accion = new Intent(MainActivity.this, Login.class);
                 startActivity(accion);
             }
@@ -66,7 +67,7 @@ public class MainActivity extends AppCompatActivity {
         Registry_Main.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                System.out.println(DBM.db.getPath());
+                System.out.println("///////////////: "+DBM.db.getPath());
 //                Persona per = new Persona();
 //
 //                Cursor cursor = DBM.getUsuarios();

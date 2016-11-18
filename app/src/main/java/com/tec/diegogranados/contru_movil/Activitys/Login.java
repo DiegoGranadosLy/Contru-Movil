@@ -52,41 +52,41 @@ public class Login extends AppCompatActivity {
 
         @Override
         protected String[][] doInBackground(String[][]... params){
-            boolean connection = Communicator_Database.isOnline(getApplicationContext());
-            if (connection == true){
-                //Hay que mandar la informacion al servidor y a la base de datos propia.
-                Communicator_Database com = new Communicator_Database();
-                String message = com.peticion("//login//","{\"username\":\""+ username
-                                              +"\",\"password\":\""+password +"\"}");
-
-                System.out.println("El mensaje recibido es: "+ message);
-                Gson gson = new Gson();
-                RequestLogin login = gson.fromJson(message, RequestLogin.class);
-
-                if (login.success==true){
-                    accion = true;
-                }
-                else{
-                    accion = false;
-                }
-            }
-            else{
-                //Se envia la informacion a la base de datos del telefono para su posterior sincronizacion
-            }
+//            boolean connection = Communicator_Database.isOnline(getApplicationContext());
+//            if (connection == true){
+//                //Hay que mandar la informacion al servidor y a la base de datos propia.
+//                Communicator_Database com = new Communicator_Database();
+//                String message = com.peticion("//login//","{\"username\":\""+ username
+//                                              +"\",\"password\":\""+password +"\"}");
+//
+//                System.out.println("El mensaje recibido es: "+ message);
+//                Gson gson = new Gson();
+//                RequestLogin login = gson.fromJson(message, RequestLogin.class);
+//
+//                if (login.success==true){
+//                    accion = true;
+//                }
+//                else{
+//                    accion = false;
+//                }
+//            }
+//            else{
+//                //Se envia la informacion a la base de datos del telefono para su posterior sincronizacion
+//            }
             return null;
         }
 
         @Override
         protected void onPostExecute(String[][] result) {
-            if (accion == true){
+//            if (accion == true){
                 siguiente = new Intent(getApplicationContext(), Main_Page_App.class);
                 startActivity(siguiente);
-            }
-            else{
-                    Toast toast = Toast.makeText(Login.this,
-                            "Unknown user", Toast.LENGTH_LONG);
-                    toast.show();
-            }
+//            }
+//            else{
+//                    Toast toast = Toast.makeText(Login.this,
+//                            "Unknown user", Toast.LENGTH_LONG);
+//                    toast.show();
+//            }
         }
     }
 }

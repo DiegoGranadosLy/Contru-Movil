@@ -13,14 +13,18 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.tec.diegogranados.contru_movil.R;
 import com.tec.diegogranados.contru_movil.Threads.Thread_Sync;
+import com.tec.diegogranados.contru_movil.User.User;
 
 public class Main_Page_App extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
+    TextView textUser;
+    TextView textAccess;
     Thread_Sync thread_sync;
     Intent siguiente;
 
@@ -49,6 +53,11 @@ public class Main_Page_App extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        textUser   = (TextView)findViewById(R.id.Usuario_Main_Menu);
+        textAccess = (TextView)findViewById(R.id.Acceso_Main_Menu);
+        textUser.setText(User.NAME+ " " + User.APELLIDO);
+        textAccess.setText(User.ACCESO);
     }
 
     @Override

@@ -20,13 +20,19 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
+import com.tec.diegogranados.contru_movil.Beans.Categoria;
+import com.tec.diegogranados.contru_movil.Beans.Persona;
+import com.tec.diegogranados.contru_movil.Beans.Result;
 import com.tec.diegogranados.contru_movil.ListView.Order_Adapter_List;
 import com.tec.diegogranados.contru_movil.ListView.Order_Entry_List;
+import com.tec.diegogranados.contru_movil.Post.Communicator_Database;
 import com.tec.diegogranados.contru_movil.R;
 import com.tec.diegogranados.contru_movil.Threads.Thread_Sync;
 
@@ -40,6 +46,8 @@ public class Categories extends AppCompatActivity
     Communicator comunicador;
     Order_Adapter_List adapter;
     Button button_Create_Categories;
+    Categoria[] categorias;
+    boolean accion;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,6 +55,7 @@ public class Categories extends AppCompatActivity
         setContentView(R.layout.activity_categories);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -67,6 +76,7 @@ public class Categories extends AppCompatActivity
             }
         });
 
+        accion =false;
         comunicador = new Communicator();
         comunicador.execute(new String[0][0],new String[0][0],new String[0][0]);
     }
@@ -159,35 +169,49 @@ public class Categories extends AppCompatActivity
 
         @Override
         protected String[][] doInBackground(String[][]... strings) {
+            listview = (ListView) findViewById(R.id.ListView_Categories);
+            //Se llaman los metodos auxiliares del metodo.
+            Set_Adapter(listview);
             return new String[0][];
         }
 
 
         @Override
         protected void onPostExecute(String[][] result) {
-            listview = (ListView) findViewById(R.id.ListView_Categories);
-            //Se llaman los metodos auxiliares del metodo.
-            Set_Adapter(listview);
             AccionItemLista(listview, result);
+        }
+    }
+
+
+    private void getCategorias(){
+        boolean connection = Communicator_Database.isOnline(getApplicationContext());
+        if (connection == true) {
+            Communicator_Database com = new Communicator_Database();
+            String message = com.peticion("//show//", "{\"type\":\"categories\"}");
+
+            Gson gson = new Gson();
+            categorias = gson.fromJson(message, Categoria[].class);
+        }
+        else {
+            Categoria a = new Categoria();
+            a.id =0;a.nombre="Caca";a.descripcion="Huele mal";
+            Categoria b = new Categoria();
+            b.id =0;b.nombre="Madera";b.descripcion="Color cafe";
+            Categoria c = new Categoria();
+            c.id =0;c.nombre="Metal";c.descripcion="Brillante";
+            categorias = new Categoria[]{a,b,c};
         }
     }
 
     private void Set_Adapter(ListView lista){
 
-        String[][] misPedidos ={{"Tecnologico","Cimientos","Concluido"}
-                ,{"UNA","Paredes","Incompleto"},{"UCR","Cielo","Concluido"}
-                ,{"HP","Instalacion Electrica","Incompleto"},{"Teradyne","Instalacion Pluvial","Incompleto"}
-                ,{"Casa Diego","Techo","Concluido"},{"Casa Alerto","Mueble Pintura","Incompleto"}
-                ,{"El Aguila","Tuberia","75","Incompleto"},{"Casa Enso","Canoas","Incompleto"}
-                ,{"UNA","Paredes","Incompleto"},{"UCR","Cielo","Concluido"}
-                ,{"HP","Instalacion Electrica","Incompleto"},{"Teradyne","Instalacion Pluvial","Incompleto"}
-                ,{"Casa Diego","Techo","Concluido"},{"Casa Alerto","Mueble Pintura","Incompleto"}
-                ,{"El Aguila","Tuberia","75","Incompleto"},{"Casa Enso","Canoas","Incompleto"}};
+        getCategorias();
 
         ArrayList<Order_Entry_List> datos = new ArrayList<Order_Entry_List>();
-        for(int i = 0; i < misPedidos.length; i++){
-            datos.add(new Order_Entry_List(R.mipmap.ic_person_pin_black_24dp,misPedidos[i][0],misPedidos[i][1]));
+        for (int i = 0; i < categorias.length; i++) {
+            datos.add(new Order_Entry_List(R.mipmap.ic_person_pin_black_24dp, categorias[i].nombre, categorias[i].descripcion));
         }
+
 
         adapter = new Order_Adapter_List(getApplicationContext(), R.layout.order_list_view, datos){
             @Override
@@ -212,7 +236,9 @@ public class Categories extends AppCompatActivity
             public void onItemClick(AdapterView<?> pariente, View view, int posicion, long id) {
                 Order_Entry_List elegido = (Order_Entry_List) pariente.getItemAtPosition(posicion);
 
-                CharSequence texto = "Aqui va la descripcion de la categoria";
+                //Seccion donde se muestra la informacion del usuario./////////////////////////////
+                CharSequence texto = "Name : " + categorias[posicion].nombre + "\n"+
+                        "Description : " + categorias[posicion].descripcion ;
 
                 AlertDialog.Builder builder1 = new AlertDialog.Builder(Categories.this);
                 builder1.setTitle(elegido.get_Titulo());
@@ -231,7 +257,7 @@ public class Categories extends AppCompatActivity
         lista.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
 
             @Override
-            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
+            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, final long l) {
 
                 AlertDialog.Builder builder1 = new AlertDialog.Builder(Categories.this);
                 builder1.setTitle("Action");
@@ -249,6 +275,10 @@ public class Categories extends AppCompatActivity
                             public void onClick(DialogInterface dialog, int id) {
                                 siguiente = new Intent(Categories.this, Registry_Category.class);
                                 siguiente.putExtra("Action","Update");
+                                siguiente.putExtra("id",String.valueOf(categorias[(int)l].id));
+                                siguiente.putExtra("Name",categorias[(int)l].nombre);
+                                siguiente.putExtra("Descripcion",categorias[(int)l].descripcion);
+
                                 startActivity(siguiente);
                             }
                         });
@@ -256,8 +286,8 @@ public class Categories extends AppCompatActivity
                 builder1.setNegativeButton("Delete",
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
-                                Toast toast = Toast.makeText(Categories.this, "Accion de borrado", Toast.LENGTH_LONG);
-                                toast.show();
+                                ComDelete del = new ComDelete(categorias[(int) l]);
+                                del.execute();
                                 dialog.cancel();
                             }
                         });
@@ -275,5 +305,63 @@ public class Categories extends AppCompatActivity
                 startActivity(siguiente);
             }
         });
+    }
+
+    public class ComDelete extends AsyncTask<String[][], String[][], String[][]> {
+        Categoria categorias;
+        public ComDelete(Categoria pCategoria) {
+            categorias = pCategoria;
+        }
+
+        @Override
+        protected String[][] doInBackground(String[][]... strings) {
+            if (Communicator_Database.isOnline(getApplicationContext())){
+                if (accionDeleteEnBase(categorias))
+                    accion=true;
+                else{
+                    if (accionDeleteEnTelefono(categorias))
+                        accion=true;
+                    else
+                        accion=false;
+                }
+            }
+            else{
+                if (accionDeleteEnTelefono(categorias))
+                    accion=true;
+                else
+                    accion=false;
+            }
+            return new String[0][0];
+        }
+
+        @Override
+        protected void onPostExecute(String[][] result) {
+            if (accion == true){
+                siguiente = new Intent(getApplicationContext(),Clients.class);
+                startActivity(siguiente);
+            }
+            else{
+                Toast toast = Toast.makeText(Categories.this,
+                        "We cannot delete this categorie in this moment.", Toast.LENGTH_LONG);
+                toast.show();
+            }
+        }
+    }
+
+    //Metodo que borra un elemento de la base de datos.
+    private boolean accionDeleteEnBase(Categoria categorias){
+        return false;
+    }
+
+    //Metodo que borra un elemento de la base de datos del telefono.
+    private boolean accionDeleteEnTelefono(Categoria categorias){
+        Communicator_Database com = new Communicator_Database();
+
+        Gson gson = new Gson();
+        String message = com.peticion("//control//", "{\"operation\":\"delete\",\"type\":\"categories\"" +
+                ",\"jsonObject\":"+ gson.toJson(categorias) +"}");
+
+        Result Resultado = gson.fromJson(message, Result.class);
+        return Resultado.success;
     }
 }

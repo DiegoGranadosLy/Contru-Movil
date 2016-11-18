@@ -25,8 +25,13 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
+import com.tec.diegogranados.contru_movil.Beans.Persona;
+import com.tec.diegogranados.contru_movil.Beans.Producto;
+import com.tec.diegogranados.contru_movil.Beans.Result;
 import com.tec.diegogranados.contru_movil.ListView.Order_Adapter_List;
 import com.tec.diegogranados.contru_movil.ListView.Order_Entry_List;
+import com.tec.diegogranados.contru_movil.Post.Communicator_Database;
 import com.tec.diegogranados.contru_movil.R;
 
 import java.util.ArrayList;
@@ -39,6 +44,8 @@ public class Products extends AppCompatActivity
     Button button_Create;
     Communicator comunicador;
     Order_Adapter_List adapter;
+    Producto[] productos;
+    boolean accion;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,6 +63,7 @@ public class Products extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+        accion = false;
         button_Create = (Button)findViewById(R.id.button_Create_Products);
         comunicador = new Communicator();
         comunicador.execute(new String[0][0],new String[0][0],new String[0][0]);
@@ -148,39 +156,52 @@ public class Products extends AppCompatActivity
 
         @Override
         protected String[][] doInBackground(String[][]... strings) {
+
+            listview = (ListView) findViewById(R.id.ListView_Products);
+            //Se llaman los metodos auxiliares del metodo.
+            Set_Adapter(listview);
+            AccionButtonCrear();
             return new String[0][];
         }
 
 
         @Override
         protected void onPostExecute(String[][] result) {
-            listview = (ListView) findViewById(R.id.ListView_Products);
-            //Se llaman los metodos auxiliares del metodo.
-            Set_Adapter(listview);
             AccionItemLista(listview, result);
-            AccionButtonCrear();
         }
     }
 
+    private Producto[] getProductos(){
+        boolean connection = Communicator_Database.isOnline(getApplicationContext());
+        if (connection == true) {
+            Communicator_Database com = new Communicator_Database();
+            String message = com.peticion("//show//", "{\"type\":\"products\"}");
+
+            Gson gson = new Gson();
+            productos = gson.fromJson(message, Producto[].class);
+        }
+        else {
+            Producto a = new Producto();
+            a.id = 1;a.nombre = "Taladro Hiperbolico";a.descripcion = "Taladro";a.precio = 70000;a.disponible = 100;a.sucursal = "Ferreteria Brenes";a.proveedor = "Sesalassey Marley";a.categoria = "Herramientas Electricas";
+            Producto b = new Producto();
+            b.id = 2;b.nombre = "Martillo";b.descripcion = "Martillo Casual";b.precio = 75000;b.disponible = 70;b.sucursal = "El Pochote";b.proveedor = "Sesalassey Marley";b.categoria = "Herramientas";
+            Producto c = new Producto();
+            c.id = 3;c.nombre = "Galon Pintura";c.descripcion = "Para pintar";c.precio = 12000;c.disponible = 500;c.sucursal = "Pinturas Sur";c.proveedor = "Sesalassey Marley";c.categoria = "Pinturas";
+            productos = new Producto[]{a,b,c};
+        }
+        return productos;
+    }
     private void Set_Adapter(ListView lista){
 
-        String[][] misPedidos ={{"Tecnologico","Cimientos","Concluido"}
-                ,{"UNA","Paredes","Incompleto"},{"UCR","Cielo","Concluido"}
-                ,{"HP","Instalacion Electrica","Incompleto"},{"Teradyne","Instalacion Pluvial","Incompleto"}
-                ,{"Casa Diego","Techo","Concluido"},{"Casa Alerto","Mueble Pintura","Incompleto"}
-                ,{"El Aguila","Tuberia","75","Incompleto"},{"Casa Enso","Canoas","Incompleto"}
-                ,{"UNA","Paredes","Incompleto"},{"UCR","Cielo","Concluido"}
-                ,{"HP","Instalacion Electrica","Incompleto"},{"Teradyne","Instalacion Pluvial","Incompleto"}
-                ,{"Casa Diego","Techo","Concluido"},{"Casa Alerto","Mueble Pintura","Incompleto"}
-                ,{"El Aguila","Tuberia","75","Incompleto"},{"Casa Enso","Canoas","Incompleto"}};
+        productos = getProductos();
 
         ArrayList<Order_Entry_List> datos = new ArrayList<Order_Entry_List>();
-        for(int i = 0; i < misPedidos.length; i++){
-            if (misPedidos[i][2].equals("Concluido")){
-                datos.add(new Order_Entry_List(R.mipmap.ic_check_black_24dp,misPedidos[i][0],misPedidos[i][1]));
+        for(int i = 0; i < productos.length; i++){
+            if (productos[i].disponible>0){
+                datos.add(new Order_Entry_List(R.mipmap.ic_check_black_24dp,productos[i].nombre,Integer.toString(productos[i].precio)));
             }
             else{
-                datos.add(new Order_Entry_List(R.mipmap.ic_clear_black_24dp,misPedidos[i][0],misPedidos[i][1]));
+                datos.add(new Order_Entry_List(R.mipmap.ic_clear_black_24dp,productos[i].nombre,Integer.toString(productos[i].precio)));
             }
         }
 
@@ -209,12 +230,12 @@ public class Products extends AppCompatActivity
                 Order_Entry_List elegido = (Order_Entry_List) pariente.getItemAtPosition(posicion);
 
                 //Seccion donde se muestra la informacion del usuario./////////////////////////////
-                CharSequence texto = "Branch Office : " + "xxxxxxxx" + "\n"+
-                        "Provider : " + "xxxxxxxx" + "\n"+
-                        "Category : "+ "xxxxxxx" + "\n"+
-                        "Exempt : " + "xxxxxx" + "\n"+
-                        "Quantity : " + "xxxx"+ "\n"+
-                        "Description : "+ "xxxx";
+                CharSequence texto = "Branch Office : " + productos[posicion].sucursal + "\n"+
+                        "Provider : " + productos[posicion].proveedor + "\n"+
+                        "Category : "+ productos[posicion].categoria + "\n"+
+                        "Exempt : " + productos[posicion].precio + "\n"+
+                        "Quantity : " + productos[posicion].disponible+ "\n"+
+                        "Description : "+ productos[posicion].descripcion;
 
                 AlertDialog.Builder builder1 = new AlertDialog.Builder(Products.this);
                 builder1.setTitle(elegido.get_Titulo());
@@ -233,7 +254,7 @@ public class Products extends AppCompatActivity
         lista.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
 
             @Override
-            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
+            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, final long l) {
 
                 AlertDialog.Builder builder1 = new AlertDialog.Builder(Products.this);
                 builder1.setTitle("Action");
@@ -251,6 +272,14 @@ public class Products extends AppCompatActivity
                             public void onClick(DialogInterface dialog, int id) {
                                 siguiente = new Intent(Products.this,Registry_Product.class);
                                 siguiente.putExtra("Action", "Update");
+                                siguiente.putExtra("nombre",productos[(int) l].nombre);
+                                siguiente.putExtra("descripcion",productos[(int) l].descripcion);
+                                siguiente.putExtra("cantidad",Integer.toString(productos[(int) l].disponible));
+                                siguiente.putExtra("precio",Integer.toString(productos[(int) l].precio));
+                                siguiente.putExtra("proveedor",productos[(int) l].proveedor);
+                                siguiente.putExtra("categoria",productos[(int) l].categoria);
+                                siguiente.putExtra("sucursal",productos[(int) l].sucursal);
+                                siguiente.putExtra("id",Integer.toString(productos[(int) l].id));
                                 startActivity(siguiente);
                                 dialog.cancel();
                             }
@@ -259,8 +288,9 @@ public class Products extends AppCompatActivity
                 builder1.setNegativeButton("Delete",
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
-                                Toast toast = Toast.makeText(Products.this, "Accion de borrado", Toast.LENGTH_LONG);
-                                toast.show();
+                                //Agregar accion de borrar un cliente.
+                                ComDelete del = new ComDelete(productos[(int) l]);
+                                del.execute();
                                 dialog.cancel();
                             }
                         });
@@ -280,5 +310,64 @@ public class Products extends AppCompatActivity
                 startActivity(siguiente);
             }
         });
+    }
+
+    public class ComDelete extends AsyncTask<String[][], String[][], String[][]> {
+        Producto producto;
+        public ComDelete(Producto pProducto) {
+            producto = pProducto;
+        }
+
+        @Override
+        protected String[][] doInBackground(String[][]... strings) {
+            if (Communicator_Database.isOnline(getApplicationContext())){
+                if (accionDeleteEnBase(producto))
+                    accion=true;
+                else{
+                    if (accionDeleteEnTelefono(producto))
+                        accion=true;
+                    else
+                        accion=false;
+                }
+            }
+            else{
+                if (accionDeleteEnTelefono(producto))
+                    accion=true;
+                else
+                    accion=false;
+            }
+            return new String[0][0];
+        }
+
+        @Override
+        protected void onPostExecute(String[][] result) {
+            if (accion == true){
+                siguiente = new Intent(getApplicationContext(),Products.class);
+                startActivity(siguiente);
+            }
+            else{
+                Toast toast = Toast.makeText(Products.this,
+                        "We cannot delete a client in this moment.", Toast.LENGTH_LONG);
+                toast.show();
+            }
+        }
+    }
+
+    //Metodo que borra un elemento de la base de datos.
+    private boolean accionDeleteEnBase(Producto producto){
+
+        Communicator_Database com = new Communicator_Database();
+
+        Gson gson = new Gson();
+        String message = com.peticion("//control//", "{\"operation\":\"delete\",\"type\":\"product\"" +
+                ",\"jsonObject\":"+ gson.toJson(producto) +"}");
+
+        Result Resultado = gson.fromJson(message, Result.class);
+        return Resultado.success;
+    }
+
+    //Metodo que borra un elemento de la base de datos del telefono.
+    private boolean accionDeleteEnTelefono(Producto producto){
+        return false;
     }
 }

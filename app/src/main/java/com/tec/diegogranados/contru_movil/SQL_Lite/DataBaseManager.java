@@ -194,9 +194,9 @@ public class DataBaseManager {
         valores.put(TPRODUCTO_DESCRIPCION,producto.descripcion);
         valores.put(TPRODUCTO_DISPONIBLE,producto.disponible);
         valores.put(TPRODUCTO_PRECIO,producto.precio);
-        valores.put(TPRODUCTO_ID_SUCURSAL,producto.id_sucursal);
-        valores.put(TPRODUCTO_ID_PROVEEDOR,producto.id_proveedor);
-        valores.put(TPRODUCTO_ID_CATEGORIA,producto.id_categoria);
+        valores.put(TPRODUCTO_ID_SUCURSAL,producto.sucursal);
+        valores.put(TPRODUCTO_ID_PROVEEDOR,producto.proveedor);
+        valores.put(TPRODUCTO_ID_CATEGORIA,producto.categoria);
 
         return db.insert(TABLE_PRODUCTO,null,valores);
     }
@@ -290,9 +290,9 @@ public class DataBaseManager {
         valores.put(TPRODUCTO_DESCRIPCION,producto.descripcion);
         valores.put(TPRODUCTO_DISPONIBLE,producto.disponible);
         valores.put(TPRODUCTO_PRECIO,producto.precio);
-        valores.put(TPRODUCTO_ID_SUCURSAL,producto.id_sucursal);
-        valores.put(TPRODUCTO_ID_PROVEEDOR,producto.id_proveedor);
-        valores.put(TPRODUCTO_ID_CATEGORIA,producto.id_categoria);
+        valores.put(TPRODUCTO_ID_SUCURSAL,producto.sucursal);
+        valores.put(TPRODUCTO_ID_PROVEEDOR,producto.proveedor);
+        valores.put(TPRODUCTO_ID_CATEGORIA,producto.categoria);
 
         return db.update(TABLE_PRODUCTO,valores,TPRODUCTO_ID+"=?",new String[]{String.valueOf(producto.id)});
     }
