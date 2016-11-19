@@ -2,6 +2,7 @@ package com.tec.diegogranados.contru_movil.Activitys;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -26,6 +27,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
+import com.tec.diegogranados.contru_movil.Beans.Categoria;
 import com.tec.diegogranados.contru_movil.Beans.Persona;
 import com.tec.diegogranados.contru_movil.Beans.Producto;
 import com.tec.diegogranados.contru_movil.Beans.Result;
@@ -33,9 +35,14 @@ import com.tec.diegogranados.contru_movil.ListView.Order_Adapter_List;
 import com.tec.diegogranados.contru_movil.ListView.Order_Entry_List;
 import com.tec.diegogranados.contru_movil.Post.Communicator_Database;
 import com.tec.diegogranados.contru_movil.R;
+import com.tec.diegogranados.contru_movil.SQL_Lite.DataBaseManager;
 
 import java.util.ArrayList;
 
+/**
+ * Clase que maneja la ventana
+ * de categorias de la aplicacion.
+ */
 public class Products extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -69,6 +76,7 @@ public class Products extends AppCompatActivity
         comunicador.execute(new String[0][0],new String[0][0],new String[0][0]);
     }
 
+
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -79,6 +87,13 @@ public class Products extends AppCompatActivity
         }
     }
 
+    /**
+     * Metodo sobreescrito que crea los diferentes
+     * menus que se muestran en la ventana de la aplicacion.
+     * @param menu es el archivo xml que recibe para cargar
+     * la vista de menu
+     * @return
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main__page__app, menu);
@@ -104,6 +119,7 @@ public class Products extends AppCompatActivity
         return true;
     }
 
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
@@ -114,6 +130,12 @@ public class Products extends AppCompatActivity
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * Metodo que define las acciones a tomar con cada uno de los
+     * elementos del menu desplegable.Todos son redireccionamientos.
+     * @param item es el item seleccionado del menu.
+     * @return
+     */
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
@@ -150,10 +172,23 @@ public class Products extends AppCompatActivity
         return true;
     }
 
+    /**
+     * Clase interna que seteara los valores
+     * de los listViews e incorporara
+     * gran parte de la logica de la ventana.
+     */
     public class Communicator extends AsyncTask<String[][], String[][], String[][]> {
         public Communicator() {
         }
 
+        /**
+         * Metodo sobreescrito que se ejecuta
+         * en segundo plano. En el se establecen
+         * los adaptadores y se solicicita la
+         * informacion para cargar en el Activity
+         * @param strings
+         * @return
+         */
         @Override
         protected String[][] doInBackground(String[][]... strings) {
 
@@ -165,13 +200,26 @@ public class Products extends AppCompatActivity
         }
 
 
+        /**
+         * Metodo que se ejecuta luego del
+         * doInBackground. Define las
+         * acciones al presionar un
+         * elememto de la lista.
+         * @param result
+         */
         @Override
         protected void onPostExecute(String[][] result) {
             AccionItemLista(listview, result);
         }
     }
 
-    private Producto[] getProductos(){
+    /**
+     * Metodo que realiza un query
+     * para obtener las categorias
+     * presentes de la app.
+     * Puede ser con o sin red.
+     */
+    private Producto[] getProductosBase(){
         boolean connection = Communicator_Database.isOnline(getApplicationContext());
         if (connection == true) {
             Communicator_Database com = new Communicator_Database();
@@ -181,19 +229,21 @@ public class Products extends AppCompatActivity
             productos = gson.fromJson(message, Producto[].class);
         }
         else {
-            Producto a = new Producto();
-            a.id = 1;a.nombre = "Taladro Hiperbolico";a.descripcion = "Taladro";a.precio = 70000;a.disponible = 100;a.sucursal = "Ferreteria Brenes";a.proveedor = "Sesalassey Marley";a.categoria = "Herramientas Electricas";
-            Producto b = new Producto();
-            b.id = 2;b.nombre = "Martillo";b.descripcion = "Martillo Casual";b.precio = 75000;b.disponible = 70;b.sucursal = "El Pochote";b.proveedor = "Sesalassey Marley";b.categoria = "Herramientas";
-            Producto c = new Producto();
-            c.id = 3;c.nombre = "Galon Pintura";c.descripcion = "Para pintar";c.precio = 12000;c.disponible = 500;c.sucursal = "Pinturas Sur";c.proveedor = "Sesalassey Marley";c.categoria = "Pinturas";
-            productos = new Producto[]{a,b,c};
+            System.out.println("Estoy entrando por aca...!!");
+            getProducts();
         }
         return productos;
     }
+
+    /**
+     * Metodo en el que se establece el adapter
+     * y la lista de elementos que se añadiran
+     * al listView
+     * @param lista es el listView cargado desde el XML
+     */
     private void Set_Adapter(ListView lista){
 
-        productos = getProductos();
+        getProductosBase();
 
         ArrayList<Order_Entry_List> datos = new ArrayList<Order_Entry_List>();
         for(int i = 0; i < productos.length; i++){
@@ -204,8 +254,6 @@ public class Products extends AppCompatActivity
                 datos.add(new Order_Entry_List(R.mipmap.ic_clear_black_24dp,productos[i].nombre,Integer.toString(productos[i].precio)));
             }
         }
-
-
         adapter = new Order_Adapter_List(getApplicationContext(), R.layout.order_list_view, datos){
             @Override
             public void onEntrada(Object entrada, View view) {
@@ -219,11 +267,16 @@ public class Products extends AppCompatActivity
                 imagen_entrada.setImageResource(((Order_Entry_List) entrada).get_idImagen());
             }
         };
-
-        lista.setAdapter(adapter);
     }
 
+    /**
+     * Metodo en el que se definen las acciones
+     * para cada uno de los elementos de la lista.
+     * @param lista ListView de la app
+     * @param result Valor agregado.
+     */
     private void AccionItemLista(ListView lista, String[][] result){
+        lista.setAdapter(adapter);
         lista.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> pariente, View view, int posicion, long id) {
@@ -301,6 +354,35 @@ public class Products extends AppCompatActivity
         });
     }
 
+    /**
+     * Metodo para obtener los productos
+     * sin necesidad de conectarse a la red.
+     */
+    private void getProducts(){
+        DataBaseManager DBM = new DataBaseManager(getApplicationContext());
+        Cursor cursor= DBM.getProducto();
+        System.out.println("Cantidad de productos: "+cursor.getCount());
+        productos = new Producto[cursor.getCount()];
+        cursor.moveToFirst();
+        for(int i=0;i<cursor.getCount();i++){
+            Producto cat = new Producto();
+            cat.id = cursor.getInt(0);
+            cat.nombre = cursor.getString(1);
+            cat.descripcion = cursor.getString(2);
+            cat.disponible = cursor.getInt(3);
+            cat.precio = cursor.getInt(4);
+            cat.id_sucursal = cursor.getInt(5);
+            cat.id_proveedor = cursor.getString(6);
+            cat.id_categoria = cursor.getInt(7);
+            cursor.moveToNext();
+            productos[i] = cat;
+        }
+    }
+
+    /**
+     * Metodo que define la accion
+     * de crear un nuevo producto.
+     */
     private void AccionButtonCrear(){
         button_Create.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -312,12 +394,22 @@ public class Products extends AppCompatActivity
         });
     }
 
+    /**
+     * Clase que incorpora una ejecucion
+     * en paralelo a la principal
+     * para poder eliminar una categoria.
+     */
     public class ComDelete extends AsyncTask<String[][], String[][], String[][]> {
         Producto producto;
         public ComDelete(Producto pProducto) {
             producto = pProducto;
         }
-
+        /**
+         * Logica para borrar
+         * con red o sin ella.
+         * @param strings
+         * @return
+         */
         @Override
         protected String[][] doInBackground(String[][]... strings) {
             if (Communicator_Database.isOnline(getApplicationContext())){
@@ -338,7 +430,11 @@ public class Products extends AppCompatActivity
             }
             return new String[0][0];
         }
-
+        /**
+         * Acorde a la decision tomada en el background
+         * mostrara un toast u otro.
+         * @param result
+         */
         @Override
         protected void onPostExecute(String[][] result) {
             if (accion == true){
@@ -347,12 +443,16 @@ public class Products extends AppCompatActivity
             }
             else{
                 Toast toast = Toast.makeText(Products.this,
-                        "We cannot delete a client in this moment.", Toast.LENGTH_LONG);
+                        "We cannot delete a product in this moment.", Toast.LENGTH_LONG);
                 toast.show();
             }
         }
     }
-
+    /**
+     * Metodo que borra un elemento de la base de datos del telefono.
+     * @param producto wrapper a eliminar.
+     * @return
+     */
     //Metodo que borra un elemento de la base de datos.
     private boolean accionDeleteEnBase(Producto producto){
 
@@ -365,9 +465,21 @@ public class Products extends AppCompatActivity
         Result Resultado = gson.fromJson(message, Result.class);
         return Resultado.success;
     }
-
+    /**
+     * Metodo que elimina un elemento de la
+     * base de datos real.
+     * @param producto Wrapper del elemento
+     *                   a eliminar.
+     * @return
+     */
     //Metodo que borra un elemento de la base de datos del telefono.
     private boolean accionDeleteEnTelefono(Producto producto){
-        return false;
+        DataBaseManager DBM = new DataBaseManager(getApplicationContext());
+        int exito = DBM.deleteProducto(producto.id);
+        if (exito==-1)
+            return false;
+        else{
+            return true;
+        }
     }
 }

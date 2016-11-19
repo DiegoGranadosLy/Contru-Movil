@@ -2,6 +2,7 @@ package com.tec.diegogranados.contru_movil.Activitys;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.AsyncTask;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -21,10 +22,16 @@ import com.tec.diegogranados.contru_movil.Beans.Producto;
 import com.tec.diegogranados.contru_movil.Beans.RequestNewClient;
 import com.tec.diegogranados.contru_movil.Beans.Result;
 import com.tec.diegogranados.contru_movil.Beans.Sucursal;
+import com.tec.diegogranados.contru_movil.Beans.Table_Producto;
 import com.tec.diegogranados.contru_movil.Beans.Usuario;
 import com.tec.diegogranados.contru_movil.Post.Communicator_Database;
 import com.tec.diegogranados.contru_movil.R;
+import com.tec.diegogranados.contru_movil.SQL_Lite.DataBaseManager;
 
+/**
+ * Clase en la que se visualizan los
+ * elementos o productos de la base de datos.
+ */
 public class Registry_Product extends AppCompatActivity {
 
     EditText EditText_Name_Product_Registry;
@@ -45,8 +52,16 @@ public class Registry_Product extends AppCompatActivity {
     Sucursal[] sucursales;
     Categoria[] categorias;
     Persona[] proveedores;
+    int id_sucursal;
+    String id_proveedor;
+    int id_categoria;
 
 
+    /**
+     * Metodo que inicializa todas las
+     * instancias de la ventana.
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -81,6 +96,10 @@ public class Registry_Product extends AppCompatActivity {
         get.execute(0,0,0);
     }
 
+    /**
+     * Metodo en el que se definen las acciones
+     * para cada uno de los botones asociados.
+     */
     private void accionBotones(){
         button_BProvider_Registry_Product.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -145,6 +164,10 @@ public class Registry_Product extends AppCompatActivity {
         });
     }
 
+    /**
+     * Metodo para obtener las sucursales
+     * de la base de datos.
+     */
     private void getSucursales() {
         boolean connection = Communicator_Database.isOnline(getApplicationContext());
         if (connection == true) {
@@ -155,16 +178,25 @@ public class Registry_Product extends AppCompatActivity {
             sucursales = gson.fromJson(message, Sucursal[].class);
         }
         else {
-            Sucursal a = new Sucursal();
-            a.id=0;a.nombre="Coyol de Alajuela";a.ubicacion="Alajuela";
-            Sucursal b = new Sucursal();
-            b.id=1;b.nombre="Coyol de Heredia";b.ubicacion="Heredia";
-            Sucursal c = new Sucursal();
-            b.id=2;b.nombre="Coyol de San Jose";b.ubicacion="San Jose";
-            sucursales = new Sucursal[]{a,b,c};
+            DataBaseManager DBM = new DataBaseManager(getApplicationContext());
+            Cursor cursor= DBM.getSucursal();
+            sucursales = new Sucursal[cursor.getCount()];
+            cursor.moveToFirst();
+            for(int i=0;i<cursor.getCount();i++){
+                Sucursal cat = new Sucursal();
+                cat.id       = cursor.getInt(0);
+                cat.nombre   = cursor.getString(1);
+                cat.ubicacion= cursor.getString(2);
+                cursor.moveToNext();
+                sucursales[i] = cat;
+            }
         }
     }
 
+    /**
+     * Metodo para obtener las categorias
+     * de la base de datos.
+     */
     private void getCategorias() {
         boolean connection = Communicator_Database.isOnline(getApplicationContext());
         if (connection == true) {
@@ -175,16 +207,25 @@ public class Registry_Product extends AppCompatActivity {
             categorias = gson.fromJson(message, Categoria[].class);
         }
         else {
-            Categoria a = new Categoria();
-            a.id =0;a.nombre="Caca";a.descripcion="Huele mal";
-            Categoria b = new Categoria();
-            b.id =0;b.nombre="Madera";b.descripcion="Color cafe";
-            Categoria c = new Categoria();
-            c.id =0;c.nombre="Metal";c.descripcion="Brillante";
-            categorias = new Categoria[]{a,b,c};
+            DataBaseManager DBM = new DataBaseManager(getApplicationContext());
+            Cursor cursor= DBM.getSucursal();
+            categorias = new Categoria[cursor.getCount()];
+            cursor.moveToFirst();
+            for(int i=0;i<cursor.getCount();i++){
+                Categoria cat   = new Categoria();
+                cat.id          = cursor.getInt(0);
+                cat.nombre      = cursor.getString(1);
+                cat.descripcion = cursor.getString(2);
+                cursor.moveToNext();
+                categorias[i] = cat;
+            }
         }
     }
 
+    /**
+     * Metodo para obtener loos proveedores con ayuda
+     * la conexion a la red.
+     */
     private void getProveedores() {
         boolean connection = Communicator_Database.isOnline(getApplicationContext());
         if (connection == true) {
@@ -213,6 +254,10 @@ public class Registry_Product extends AppCompatActivity {
     }
 
 
+    /**
+     * Clase interna que ayudara a
+     * manejar las tareas en segundo plano.
+     */
     public class Communicator extends AsyncTask<String[][], String[][], String[][]> {
         public Communicator() {
         }
@@ -262,24 +307,33 @@ public class Registry_Product extends AppCompatActivity {
         }
 
 
+        /**
+         * Metodo en primer plano que es ejecutado
+         * luego del do in background.
+         * @param result
+         */
         @Override
         protected void onPostExecute(String[][] result) {
             if (accion == true){
                 if (action.equals("Update"))
-                    siguiente = new Intent(getApplicationContext(), Clients.class);
+                    siguiente = new Intent(getApplicationContext(), Products.class);
                 else
                     siguiente = new Intent(getApplicationContext(), Main_Page_App.class);
                 startActivity(siguiente);
             }
             else{
                 Toast toast = Toast.makeText(Registry_Product.this,
-                        "We cannot create a client in this moment.", Toast.LENGTH_LONG);
+                        "We cannot create or update a product in this moment.", Toast.LENGTH_LONG);
                 toast.show();
             }
         }
 
     }
 
+    /**
+     * Clase interna para obtener las listas internas
+     * de la ventana.
+     */
     public class CommunicatorGet extends AsyncTask<Integer,Integer,Integer> {
         public CommunicatorGet() {
         }
@@ -297,16 +351,26 @@ public class Registry_Product extends AppCompatActivity {
         }
     }
 
+    /**
+     * Metodo para agregar un producto
+     * a la base de datos web.
+     * @return
+     */
     private boolean accionAgregarEnBase(){
-        Producto producto = new Producto();
+        Table_Producto producto = new Table_Producto();
+        findData();
         producto.id          = id;
         producto.nombre      = String.valueOf(EditText_Name_Product_Registry.getText());
         producto.descripcion = String.valueOf(EditText_Description_Registry_Product.getText());
         producto.precio      = Integer.parseInt(String.valueOf(EditText_Exent_Registry_Product.getText()));
         producto.disponible  = Integer.parseInt(String.valueOf(EditText_Quantity_Registry_Product.getText()));
-        producto.sucursal    = String.valueOf(TextView_Branch_Registry_Product.getText());
-        producto.proveedor   = String.valueOf(TextView_Provider_Registry_Product.getText());
-        producto.categoria   = String.valueOf(TextView_Category_Registry_Product.getText());
+        producto.id_sucursal = id_sucursal;
+        producto.id_proveedor= id_proveedor;
+        producto.id_categoria= id_categoria;
+
+        System.out.println("id_sucursal:"+id_sucursal);
+        System.out.println("id_proveedor:"+id_proveedor);
+        System.out.println("id_categoria:"+id_categoria);
         Communicator_Database com = new Communicator_Database();
 
         Gson gson = new Gson();
@@ -317,20 +381,37 @@ public class Registry_Product extends AppCompatActivity {
         return Resultado.success;
     }
 
+    /**
+     * Metodo para agregar un
+     * producto a la base de dtos del telefono.
+     * @return
+     */
     private boolean accionAgregarBaseTelefono(){
+        DataBaseManager m = new DataBaseManager(getApplicationContext());
+//        m.getProveedores();
         return false;
     }
 
+    /**
+     * Metodo para actualizar un producto delntro
+     * dentro de la base de datos del telefono.
+     * @return
+     */
     private boolean accionActualizarEnBase(){
-        Producto producto = new Producto();
+        findData();
+        Table_Producto producto = new Table_Producto();
         producto.id          = id;
         producto.nombre      = String.valueOf(EditText_Name_Product_Registry.getText());
         producto.descripcion = String.valueOf(EditText_Description_Registry_Product.getText());
         producto.precio      = Integer.parseInt(String.valueOf(EditText_Exent_Registry_Product.getText()));
         producto.disponible  = Integer.parseInt(String.valueOf(EditText_Quantity_Registry_Product.getText()));
-        producto.sucursal    = String.valueOf(TextView_Branch_Registry_Product.getText());
-        producto.proveedor   = String.valueOf(TextView_Provider_Registry_Product.getText());
-        producto.categoria   = String.valueOf(TextView_Category_Registry_Product.getText());
+        producto.id_sucursal = id_sucursal;
+        producto.id_proveedor= id_proveedor;
+        producto.id_categoria= id_categoria;
+
+        System.out.println("id_sucursal:"+id_sucursal);
+        System.out.println("id_proveedor:"+id_proveedor);
+        System.out.println("id_categoria:"+id_categoria);
         Communicator_Database com = new Communicator_Database();
 
         Gson gson = new Gson();
@@ -345,6 +426,34 @@ public class Registry_Product extends AppCompatActivity {
     private boolean accionActualizarBaseTelefono(){
 
         return false;
+    }
+
+
+    /**
+     * Metodos auxiliares
+     * para la recoleccion de datos.
+     */
+    private void findData(){
+        for(int i =0;i<sucursales.length;i++){
+            if(sucursales[i].nombre.equals(TextView_Branch_Registry_Product.getText())){
+                id_sucursal = sucursales[i].id;
+                break;
+            }
+        }
+
+        for(int i =0;i<proveedores.length;i++){
+            if((proveedores[i].nombre).equals(TextView_Provider_Registry_Product.getText().toString().split(" ")[0])){
+                id_proveedor = proveedores[i].id;
+                break;
+            }
+        }
+
+        for(int i =0;i<categorias.length;i++){
+            if(categorias[i].nombre.equals(TextView_Category_Registry_Product.getText())){
+                id_categoria = categorias[i].id;
+                break;
+            }
+        }
     }
 
 }

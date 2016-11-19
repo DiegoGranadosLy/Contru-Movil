@@ -29,23 +29,27 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        Login_Main = (Button) findViewById(R.id.button_Login_Main);
+        Registry_Main = (Button) findViewById(R.id.button_Registry_Main);
         action = true;
         DBM = new DataBaseManager(getApplicationContext());
         Cursor cursor = DBM.getActMat();
-        if (cursor.getCount()==0){
+        System.out.println("Cuenta total:" +cursor.getCount());//////////////////////
+        if (cursor.getCount()==0){//Si no existe una sincronizacion previa
             if (Communicator_Database.isOnline(getApplicationContext())==true){
-                DBM.insertarActMat(1);
+                long a = DBM.insertarActMat(1);
+                System.out.println("El valor long es de:" + a);
                 Thread_Sync thread = new Thread_Sync(getApplicationContext());
                 thread.start();
             }
-            else{
+            else{//En caso de no poder sincronizar con el servidor
                 Toast toast = Toast.makeText(MainActivity.this, "We cant sync by first time.", Toast.LENGTH_LONG);
                 toast.show();
             }
         }
-        else{
+        else{//NCuando no es la primer sincronizacion que realiza
             cursor.moveToFirst();
-            for(int i =0;i<cursor.getCount();i++){
+            for(int i =0;i<cursor.getCount();i++){//Ciclo que busca la fecha actual.
                 if (cursor.getString(0).equals(getDate())&& cursor.getInt(1)==1){
                     action=false;
                     break;
@@ -73,11 +77,17 @@ public class MainActivity extends AppCompatActivity {
                 toast.show();
             }
         }
+        accionButton();
+    }
 
+    private String getDate(){
+        Calendar c = Calendar.getInstance();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        String strDate = sdf.format(c.getTime());
+        return strDate;
+    }
 
-        Login_Main = (Button) findViewById(R.id.button_Login_Main);
-        Registry_Main = (Button) findViewById(R.id.button_Registry_Main);
-
+    private void accionButton(){
         Login_Main.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -103,10 +113,5 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private String getDate(){
-        Calendar c = Calendar.getInstance();
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        String strDate = sdf.format(c.getTime());
-        return strDate;
-    }
+
 }

@@ -33,6 +33,10 @@ import com.tec.diegogranados.contru_movil.R;
 
 import java.util.ArrayList;
 
+/**
+ * Clase que maneja la ventana
+ * de categorias de la aplicacion.
+ */
 public class Clients extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -42,6 +46,7 @@ public class Clients extends AppCompatActivity
     Order_Adapter_List adapter;
     Persona[] persona;
     boolean accion;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,6 +80,13 @@ public class Clients extends AppCompatActivity
         }
     }
 
+    /**
+     * Metodo sobreescrito que crea los diferentes
+     * menus que se muestran en la ventana de la aplicacion.
+     * @param menu es el archivo xml que recibe para cargar
+     * la vista de menu
+     * @return
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main__page__app, menu);
@@ -111,6 +123,12 @@ public class Clients extends AppCompatActivity
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * Metodo que define las acciones a tomar con cada uno de los
+     * elementos del menu desplegable.Todos son redireccionamientos.
+     * @param item es el item seleccionado del menu.
+     * @return
+     */
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         int id = item.getItemId();
@@ -146,11 +164,22 @@ public class Clients extends AppCompatActivity
         return true;
     }
 
-
+    /**
+     * Clase interna que seteara los valores
+     * de los listViews e incorporara
+     * gran parte de la logica de la ventana.
+     */
     public class Communicator extends AsyncTask<String[][], String[][], String[][]> {
         public Communicator() {
         }
-
+        /**
+         * Metodo sobreescrito que se ejecuta
+         * en segundo plano. En el se establecen
+         * los adaptadores y se solicicita la
+         * informacion para cargar en el Activity
+         * @param strings
+         * @return
+         */
         @Override
         protected String[][] doInBackground(String[][]... strings) {
             listview = (ListView) findViewById(R.id.ListView_Clients);
@@ -159,13 +188,25 @@ public class Clients extends AppCompatActivity
             return new String[0][];
         }
 
-
+        /**
+         * Metodo que se ejecuta luego del
+         * doInBackground. Define las
+         * acciones al presionar un
+         * elememto de la lista.
+         * @param result
+         */
         @Override
         protected void onPostExecute(String[][] result) {
             AccionItemLista(listview, result);
         }
     }
 
+    /**
+     * Metodo que realiza un query
+     * para obtener las categorias
+     * presentes de la app.
+     * Puede ser con o sin red.
+     */
     private Persona[] getClientes(){
 
         boolean connection = Communicator_Database.isOnline(getApplicationContext());
@@ -195,6 +236,12 @@ public class Clients extends AppCompatActivity
         return persona;
     }
 
+    /**
+     * Metodo en el que se establece el adapter
+     * y la lista de elementos que se añadiran
+     * al listView
+     * @param lista es el listView cargado desde el XML
+     */
     private void Set_Adapter(ListView lista) {
 
         persona = getClientes();
@@ -218,10 +265,16 @@ public class Clients extends AppCompatActivity
             }
         };
 
-        lista.setAdapter(adapter);
-    }
 
+    }
+    /**
+     * Metodo en el que se definen las acciones
+     * para cada uno de los elementos de la lista.
+     * @param lista ListView de la app
+     * @param result Valor agregado.
+     */
     private void AccionItemLista(ListView lista, String[][] result) {
+        lista.setAdapter(adapter);
         lista.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> pariente, View view, int posicion, long id) {
@@ -296,13 +349,22 @@ public class Clients extends AppCompatActivity
 
     }
 
-
+    /**
+     * Clase que incorpora una ejecucion
+     * en paralelo a la principal
+     * para poder eliminar una categoria.
+     */
     public class ComDelete extends AsyncTask<String[][], String[][], String[][]> {
         Persona persona;
         public ComDelete(Persona pPersona) {
             persona = pPersona;
         }
-
+        /**
+         * Logica para borrar
+         * con red o sin ella.
+         * @param strings
+         * @return
+         */
         @Override
         protected String[][] doInBackground(String[][]... strings) {
             if (Communicator_Database.isOnline(getApplicationContext())){
@@ -323,7 +385,11 @@ public class Clients extends AppCompatActivity
             }
             return new String[0][0];
         }
-
+        /**
+         * Acorde a la decision tomada en el background
+         * mostrara un toast u otro.
+         * @param result
+         */
         @Override
         protected void onPostExecute(String[][] result) {
             if (accion == true){
@@ -337,22 +403,33 @@ public class Clients extends AppCompatActivity
             }
         }
     }
-
+    /**
+     * Metodo que borra un elemento de la base de datos del telefono.
+     * @param persona wrapper a eliminar.
+     * @return
+     */
     //Metodo que borra un elemento de la base de datos.
     private boolean accionDeleteEnBase(Persona persona){
-        return true;
-    }
-
-    //Metodo que borra un elemento de la base de datos del telefono.
-    private boolean accionDeleteEnTelefono(Persona persona){
         Communicator_Database com = new Communicator_Database();
 
         Gson gson = new Gson();
-        String message = com.peticion("//control//", "{\"operation\":\"delete\",\"type\":\"product\"" +
+        System.out.println("xxxxxxxxxxxxxxxxx");
+        String message = com.peticion("//control//", "{\"operation\":\"delete\",\"type\":\"client\"" +
                 ",\"jsonObject\":"+ gson.toJson(persona) +"}");
-
+        System.out.println("xxxxxxxxxxxxxxxxx");
         Result Resultado = gson.fromJson(message, Result.class);
         return Resultado.success;
+    }
+    /**
+     * Metodo que elimina un elemento de la
+     * base de datos real.
+     * @param persona Wrapper del elemento
+     *                   a eliminar.
+     * @return
+     */
+    //Metodo que borra un elemento de la base de datos del telefono.
+    private boolean accionDeleteEnTelefono(Persona persona){
+        return false;
     }
 
 }

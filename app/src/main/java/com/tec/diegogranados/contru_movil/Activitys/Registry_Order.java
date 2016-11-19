@@ -18,6 +18,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
+import com.tec.diegogranados.contru_movil.Beans.Cart;
 import com.tec.diegogranados.contru_movil.Beans.Persona;
 import com.tec.diegogranados.contru_movil.Beans.Producto;
 import com.tec.diegogranados.contru_movil.Beans.Result;
@@ -25,19 +26,18 @@ import com.tec.diegogranados.contru_movil.Beans.Sucursal;
 import com.tec.diegogranados.contru_movil.Post.Communicator_Database;
 import com.tec.diegogranados.contru_movil.R;
 import java.util.ArrayList;
-
+/**
+ * Clase que agrega o actualiza una categoria
+ */
 public class Registry_Order extends AppCompatActivity {
 
-    TextView TextView_Branch_Registry_Order;
-    Button Button_BBranch_Registry_Order;
-    TextView TextView_Client_Registry_Order;
-    Button   Button_BClient_Registry_Order;
-    EditText EditText_Telephone_Registry_Order;
-    TextView TextView_Time_Registry_Order;
-    Button   Button_BTime_Registry_Order;
     Button   Button_BAddProduct_Registry_Order;
     Button   Button_BBuyProduct_Registry_Order;
     ListView ListView_OrdersProducts;
+    TextView tDate;
+    TextView tClient;
+    Button   Button_Date;
+    Button   Button_Client;
 
     ArrayAdapter<String> adaptador;
 
@@ -45,9 +45,15 @@ public class Registry_Order extends AppCompatActivity {
     boolean accion;
     Sucursal[] sucursales;
     Persona [] clientes;
+    Persona cliente;
     Producto[] productos;
     ArrayList<Producto> productosComprados;
     ArrayList<String> productosCompradosString;
+
+    int id;
+    int precio;
+    String creacion;
+    String nombre;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,13 +63,12 @@ public class Registry_Order extends AppCompatActivity {
         productosCompradosString=new ArrayList();
         productosComprados      =new ArrayList();
 
-        TextView_Branch_Registry_Order    = (TextView) findViewById(R.id.TextView_Branch_Registry_Order);
-        Button_BBranch_Registry_Order     = (Button) findViewById(R.id.Button_BBranch_Registry_Order);
-        TextView_Client_Registry_Order    = (TextView) findViewById(R.id.TextView_Client_Registry_Order);
-        Button_BClient_Registry_Order     = (Button) findViewById(R.id.Button_BClient_Registry_Order);
-        EditText_Telephone_Registry_Order = (EditText) findViewById(R.id.EditText_Telephone_Registry_Order);
-        TextView_Time_Registry_Order      = (TextView) findViewById(R.id.TextView_Time_Registry_Order);
-        Button_BTime_Registry_Order       = (Button) findViewById(R.id.Button_BTime_Registry_Order);
+
+        tDate   = (TextView)findViewById(R.id.Date);
+        tClient = (TextView)findViewById(R.id.Client);
+        Button_Date  = (Button)findViewById(R.id.BDATE);
+        Button_Client= (Button)findViewById(R.id.BClient);
+
         Button_BAddProduct_Registry_Order = (Button) findViewById(R.id.Button_BAddProduct_Registry_Order);
         Button_BBuyProduct_Registry_Order = (Button) findViewById(R.id.Button_BBuyProduct_Registry_Order);
         ListView_OrdersProducts           = (ListView) findViewById(R.id.ListView_OrdersProducts);
@@ -71,10 +76,7 @@ public class Registry_Order extends AppCompatActivity {
         action = getIntent().getExtras().getString("Action");
         accion = false;
         if (action.equals("Update")){
-            TextView_Branch_Registry_Order    .setText("XxXxXxX");
-            TextView_Client_Registry_Order    .setText("XxXxXxX");
-            EditText_Telephone_Registry_Order .setText("XxXxXxX");
-            TextView_Time_Registry_Order      .setText("XxXxXxX");
+
         }
         CommunicatorList comList = new CommunicatorList();
         comList.execute();
@@ -83,26 +85,26 @@ public class Registry_Order extends AppCompatActivity {
 
 
     private void accionBotones(){
-        Button_BBranch_Registry_Order.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                System.out.println("Cantidad de sucursales:" + sucursales.length);
-                final String items[] = new String[sucursales.length];
-                for (int i = 0;i<items.length;i++)
-                    items[i] = sucursales[i].nombre;
+//        Button_BBranch_Registry_Order.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                System.out.println("Cantidad de sucursales:" + sucursales.length);
+//                final String items[] = new String[sucursales.length];
+//                for (int i = 0;i<items.length;i++)
+//                    items[i] = sucursales[i].nombre;
+//
+//                AlertDialog.Builder Stages =new AlertDialog.Builder(Registry_Order.this);
+//                Stages.setItems(items,new DialogInterface.OnClickListener(){
+//                    @Override
+//                    public void onClick(DialogInterface dialog, int which) {
+//                        TextView_Branch_Registry_Order.setText(items[which]);
+//                    }
+//                });
+//                Stages.show();
+//            }
+//        });
 
-                AlertDialog.Builder Stages =new AlertDialog.Builder(Registry_Order.this);
-                Stages.setItems(items,new DialogInterface.OnClickListener(){
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        TextView_Branch_Registry_Order.setText(items[which]);
-                    }
-                });
-                Stages.show();
-            }
-        });
-
-        Button_BClient_Registry_Order.setOnClickListener(new View.OnClickListener() {
+        Button_Client.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 final String items[] = new String[clientes.length];
@@ -113,20 +115,22 @@ public class Registry_Order extends AppCompatActivity {
                 Stages.setItems(items,new DialogInterface.OnClickListener(){
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        TextView_Client_Registry_Order.setText(items[which]);
+                        tClient.setText(items[which]);
+                        cliente = clientes[which];
                     }
                 });
                 Stages.show();
             }
         });
 
-        Button_BTime_Registry_Order.setOnClickListener(new View.OnClickListener() {
+        Button_Date.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Calendar c = Calendar.getInstance();
-                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                String strDate = sdf.format(c.getTime());
-                TextView_Time_Registry_Order.setText(strDate);
+                SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd");
+                SimpleDateFormat sdf2 = new SimpleDateFormat("HH:mm:ss");
+                String strDate = sdf1.format(c.getTime())+"T"+sdf2.format(c.getTime());
+                tDate.setText(strDate);
             }
         });
         Button_BAddProduct_Registry_Order.setOnClickListener(new View.OnClickListener() {
@@ -197,6 +201,10 @@ public class Registry_Order extends AppCompatActivity {
         });
     }
 
+    /**
+     * Metodo para obtener las sucursales disponibles
+     * para una orden.
+     */
     private void getSucursales(){
         boolean connection = Communicator_Database.isOnline(getApplicationContext());
         if (connection == true) {
@@ -217,6 +225,10 @@ public class Registry_Order extends AppCompatActivity {
         }
     }
 
+    /**
+     * Metodo para obtener los
+     * clientes disponibles para una orden.
+     */
     private void getClientes(){
         boolean connection = Communicator_Database.isOnline(getApplicationContext());
         if (connection == true) {
@@ -244,6 +256,9 @@ public class Registry_Order extends AppCompatActivity {
         }
     }
 
+    /**
+     * Metodo para obtener los productos para una orden.
+     */
     private void getProductos(){
         boolean connection = Communicator_Database.isOnline(getApplicationContext());
         if (connection == true) {
@@ -264,23 +279,37 @@ public class Registry_Order extends AppCompatActivity {
         }
     }
 
-    private void getProductosPedidos(){
-
-    }
-
+    /**
+     * Clase interna que ejecuta
+     * las tareas en segundo plano
+     * para evitar roces con la UI.
+     */
     public class CommunicatorList extends AsyncTask<Integer,Integer,Integer> {
         public CommunicatorList() {
         }
+
+        /**
+         * Hilo que maneja la logica de
+         * insercion de las bases de datos
+         * acorde a la conexion que posea.
+         * @param integers
+         * @return
+         */
         @Override
         protected Integer doInBackground(Integer... integers) {
             getSucursales();
             getClientes();
             getProductos();
-            getProductosPedidos();
-            adaptador = new ArrayAdapter<String>(getApplicationContext(), android.R.layout.simple_list_item_1, productosCompradosString);///Add
+            adaptador = new ArrayAdapter(getApplicationContext(), android.R.layout.simple_list_item_1, productosCompradosString);
             return null;
         }
 
+        /**
+         * Metodo que abrira una ventan o mostrara
+         * un mensaje acuero a la accion tomad por
+         * la ventana.
+         * @param integer
+         */
         @Override
         protected void onPostExecute(Integer integer) {
             ListView_OrdersProducts.setAdapter(adaptador);
@@ -289,6 +318,11 @@ public class Registry_Order extends AppCompatActivity {
     }
 
 
+    /**
+     * Calse interna que manejara las acciones
+     * que se desencadenan con una accion dentro
+     * de la ventana.
+     */
     public class Communicator extends AsyncTask<Integer,Integer,Integer> {
         public Communicator() {
         }
@@ -336,6 +370,11 @@ public class Registry_Order extends AppCompatActivity {
             return null;
         }
 
+        /**
+         * Se definen la accion de
+         * cierre de la accion realizada.
+         * @param integer
+         */
         @Override
         protected void onPostExecute(Integer integer) {
             Intent siguiente;
@@ -348,24 +387,31 @@ public class Registry_Order extends AppCompatActivity {
             }
             else{
                 Toast toast = Toast.makeText(Registry_Order.this,
-                        "We cannot create a order in this moment.", Toast.LENGTH_LONG);
+                        "We cannot create or update a order in this moment.", Toast.LENGTH_LONG);
                 toast.show();
             }
         }
     }
 
-
+    /**
+     * Metodo que agrega un
+     * dato a la base de datos principal.
+     * @return
+     */
     private boolean accionAgregarEnBase(){
-//        CART: {"id_producto":int,"cantidad":int};
-//        Comprar productos.
-//        POST: shop
-//        Mensaje: {"id_cliente":string,"cart":[CART]}
-//        Retorna: RESULT
-
         Communicator_Database com = new Communicator_Database();
         Gson gson = new Gson();
+        Cart[] cart = new Cart[productosComprados.size()];
+        for(int i = 0; i<productosComprados.size();i++){
+            Cart car = new Cart();
+            car.id_producto = productosComprados.get(i).id;
+            car.cantidad    = productosComprados.get(i).disponible;
+            cart[i] = car;
+        }
+        String message = com.peticion("//shop//","{\"id_cliente\":"+cliente.id+",\"cart\":"+gson.toJson(cart)+"}");
+        Result result = gson.fromJson(message,Result.class);
 
-        return false;
+        return result.success;
     }
 
     private boolean accionAgregarBaseTelefono(){
@@ -377,7 +423,6 @@ public class Registry_Order extends AppCompatActivity {
     }
 
     private boolean accionActualizarBaseTelefono(){
-
         return false;
     }
 }

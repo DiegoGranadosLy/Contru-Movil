@@ -10,10 +10,12 @@ import android.icu.util.Calendar;
 import com.tec.diegogranados.contru_movil.Beans.Categoria;
 import com.tec.diegogranados.contru_movil.Beans.Orden;
 import com.tec.diegogranados.contru_movil.Beans.Pedido;
+import com.tec.diegogranados.contru_movil.Beans.Pedidos;
 import com.tec.diegogranados.contru_movil.Beans.Persona;
 import com.tec.diegogranados.contru_movil.Beans.Producto;
 import com.tec.diegogranados.contru_movil.Beans.Rol;
 import com.tec.diegogranados.contru_movil.Beans.Sucursal;
+import com.tec.diegogranados.contru_movil.Beans.Table_Producto;
 import com.tec.diegogranados.contru_movil.Beans.Usuario;
 
 import java.io.File;
@@ -86,6 +88,7 @@ public class DataBaseManager {
 
     public static final String TOP_ID               = "id";
     public static final String TOP_OBJETO           = "objeto";
+    public static final String TOP_OPERACION           = "operacion";
 
     //Fin  de la declaracion de atributos de las tablas
 
@@ -112,7 +115,7 @@ public class DataBaseManager {
 
     public static final String CT_PEDIDO   = "CREATE TABLE " + TABLE_PEDIDO+ " ("
             + T_PEDIDO_ID         +" INT PRIMARY KEY,"
-            + T_PEDIDO_CREACION   +" DATETIME,"
+            + T_PEDIDO_CREACION   +" TEXT,"
             +T_PEDIDO_ID_CLIENTE  +" TEXT NOT NULL,"
             +T_PEDIDO_PRECIO      +" INT NOT NULL);";
 
@@ -147,8 +150,21 @@ public class DataBaseManager {
             + TACT_MATUTINA_CHECKED  +" INT NOT NULL);";
 
     public static final String CT_OP_SIN_CONEXION   = "CREATE TABLE " + TABLE_OP_SIN_CONEXION+ " ("
-            + TOP_ID       +" INT PRIMARY KEY,"
-            +TOP_OBJETO    +" TEXT NOT NULL);";
+            + TOP_ID       +" INT ,"
+            +TOP_OBJETO    +" TEXT NOT NULL,"
+            +TOP_OPERACION    +" TEXT NOT NULL," +
+            "PRIMARY KEY ( "+TOP_ID+", "+TOP_OBJETO+"));";
+
+    public static final String DPT_PERSONA = "DELETE FROM "+ TABLE_PERSONA;
+    public static final String DPT_PRODUCTO = "DELETE FROM "+ TABLE_PRODUCTO;
+    public static final String DPT_PEDIDO = "DELETE FROM "+ TABLE_PEDIDO;
+    public static final String DPT_CATEGORIA = "DELETE FROM "+ TABLE_CATEGORIA;
+    public static final String DPT_ORDEN = "DELETE FROM "+ TABLE_ORDEN;
+    public static final String DPT_USUARIO = "DELETE FROM "+ TABLE_USUARIO;
+    public static final String DPT_ROL = "DELETE FROM "+ TABLE_ROL;
+    public static final String DPT_SUCURSAL = "DELETE FROM "+ TABLE_SUCURSAL;
+    public static final String DPT_MATUTINA = "DELETE FROM "+ TABLE_ACT_MATUTINA;
+    public static final String DPT_SIN_CONEXION = "DELETE FROM "+ TABLE_OP_SIN_CONEXION;
 
     //Inicio de strings de Alter Table
 //    public static final String AT_PRODUCT_ADD_1  = TABLE_PRODUCTO +" ADD"
@@ -209,7 +225,7 @@ public class DataBaseManager {
         return db.insert(TABLE_PERSONA,null,valores);
     }
 
-    public long insertarProducto(Producto producto){
+    public long insertarProducto(Table_Producto producto){
         ContentValues valores = new ContentValues();
 
         valores.put(TPRODUCTO_ID,producto.id);
@@ -217,14 +233,14 @@ public class DataBaseManager {
         valores.put(TPRODUCTO_DESCRIPCION,producto.descripcion);
         valores.put(TPRODUCTO_DISPONIBLE,producto.disponible);
         valores.put(TPRODUCTO_PRECIO,producto.precio);
-        valores.put(TPRODUCTO_ID_SUCURSAL,producto.sucursal);
-        valores.put(TPRODUCTO_ID_PROVEEDOR,producto.proveedor);
-        valores.put(TPRODUCTO_ID_CATEGORIA,producto.categoria);
+        valores.put(TPRODUCTO_ID_SUCURSAL,producto.id_sucursal);
+        valores.put(TPRODUCTO_ID_PROVEEDOR,producto.id_proveedor);
+        valores.put(TPRODUCTO_ID_CATEGORIA,producto.id_categoria);
 
         return db.insert(TABLE_PRODUCTO,null,valores);
     }
 
-    public long insertarPedido(Pedido pedido){
+    public long insertarPedido(Pedidos pedido){
         ContentValues valores = new ContentValues();
 
         valores.put(T_PEDIDO_ID,pedido.id);
@@ -285,13 +301,14 @@ public class DataBaseManager {
         return db.insert(TABLE_SUCURSAL,null,valores);
     }
 
-    public long insertarOP(String object, int id){
+    public long insertarOP(String accion,String object, int id){
         ContentValues valores = new ContentValues();
 
         valores.put(TOP_ID,id);
         valores.put(TOP_OBJETO,object);
+        valores.put(TOP_OPERACION,accion);
 
-        return db.insert(TABLE_ROL,null,valores);
+        return db.insert(TABLE_OP_SIN_CONEXION,null,valores);
     }
 
     public long insertarActMat(int checked){
@@ -309,9 +326,46 @@ public class DataBaseManager {
         return db.delete(tablename,column+"=?",new String[]{Integer.toString(id)});
     }
 
+
+    public int deletePersona(String id){
+        return db.delete(TABLE_PERSONA,TUSUARIO_ID_PERSONA+"=?",new String[]{id});
+    }
+
+    public int deleteProducto(int id){
+        return db.delete(TABLE_PRODUCTO,TPRODUCTO_ID+"=?",new String[]{Integer.toString(id)});
+    }
+
+    public int deletePedido(int id){
+        return db.delete(TABLE_PEDIDO,T_PEDIDO_ID+"=?",new String[]{Integer.toString(id)});
+    }
+
+    public int deleteCategoria(int id){
+        return db.delete(TABLE_CATEGORIA,TCATEGORIA_ID+"=?",new String[]{Integer.toString(id)});
+    }
+
+    public int deleteOrden(int id){
+        return db.delete(TABLE_ORDEN,TORDEN_ID+"=?",new String[]{Integer.toString(id)});
+    }
+
     public int deleteUsuario(String username){
         return db.delete(TABLE_USUARIO,TUSUARIO_USERNAME+"=?",new String[]{username});
     }
+
+    public int deleteRol(int id){
+        return db.delete(TABLE_ROL,TROL_ID+"=?",new String[]{Integer.toString(id)});
+    }
+
+    public int deleteSucursal(int id){
+        return db.delete(TABLE_SUCURSAL,TSUCURSAL_ID+"=?",new String[]{Integer.toString(id)});
+    }
+
+//    public int deleteMatutina(String username){
+//        return db.delete(TABLE_USUARIO,TUSUARIO_USERNAME+"=?",new String[]{username});
+//    }
+//
+//    public int deleteUsuario(String username){
+//        return db.delete(TABLE_USUARIO,TUSUARIO_USERNAME+"=?",new String[]{username});
+//    }
 
     public long updatePersona(Persona persona){
         ContentValues valores = new ContentValues();
@@ -345,7 +399,7 @@ public class DataBaseManager {
 
         valores.put(T_PEDIDO_ID,pedido.id);
         valores.put(T_PEDIDO_CREACION,pedido.creacion);
-        valores.put(T_PEDIDO_ID_CLIENTE,pedido.id_cliente);
+        valores.put(T_PEDIDO_ID_CLIENTE,pedido.nombre);
         valores.put(T_PEDIDO_PRECIO,pedido.precio);
 
         return db.update(TABLE_PEDIDO,valores,T_PEDIDO_ID+"=?",new String[]{String.valueOf(pedido.id)});
@@ -451,6 +505,38 @@ public class DataBaseManager {
         return db.query(TABLE_SUCURSAL,columns,null,null,null,null,null);
     }
 
+    public void getProveedores(){
+//        String[] columns = {TUSUARIO_ID_PERSONA};
+//        Cursor cursor = db.query(TABLE_USUARIO,columns,"=?",new String[]{"5"},null,null,null);
+//        System.out.println("Cantidad de usuarios:"+cursor.getCount());
+        String query = "select * from " + TABLE_USUARIO + " WHERE "+TUSUARIO_ID_ROL+"=5";
+        Cursor cursor = db.rawQuery(query, null);
+        Persona[] prov = new Persona[cursor.getCount()];
+        for(int i = 0;i<cursor.getCount();i++){
+            String queryB = "select * from " + TABLE_PERSONA + " WHERE "+TPERSONA_ID+"="+cursor.getString(2)+"";
+            Cursor cursorB = db.rawQuery(queryB, null);
+            Persona per = new Persona();
+            per.id           = cursorB.getString(0);
+            per.nombre       = cursorB.getString(1);
+            per.apellido     = cursorB.getString(2);
+            per.residencia   = cursorB.getString(3);
+            per.f_nacimiento = cursorB.getString(4);
+            per.telefono = cursorB    .getInt(5);
+        }
+        System.out.println("Cantidad de usuarios:"+cursor.getCount());
+    }
+
+    public void dropTable(){
+        db.execSQL(DPT_PERSONA);
+        db.execSQL(DPT_PRODUCTO);
+        db.execSQL(DPT_PEDIDO);
+        db.execSQL(DPT_CATEGORIA);
+        db.execSQL(DPT_ORDEN);
+        db.execSQL(DPT_USUARIO);
+        db.execSQL(DPT_ROL);
+        db.execSQL(DPT_SUCURSAL);
+        db.execSQL(DPT_SIN_CONEXION);
+    }
     public void show(){
         System.out.println("Ruta del archivo SQLITE: "+db.getPath());
 

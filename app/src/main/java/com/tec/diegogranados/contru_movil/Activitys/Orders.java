@@ -2,6 +2,7 @@ package com.tec.diegogranados.contru_movil.Activitys;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -25,14 +26,24 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
+import com.tec.diegogranados.contru_movil.Beans.Categoria;
 import com.tec.diegogranados.contru_movil.Beans.Orden;
+import com.tec.diegogranados.contru_movil.Beans.Pedido;
 import com.tec.diegogranados.contru_movil.Beans.Persona;
+import com.tec.diegogranados.contru_movil.Beans.Producto;
+import com.tec.diegogranados.contru_movil.Beans.Result;
 import com.tec.diegogranados.contru_movil.ListView.Order_Adapter_List;
 import com.tec.diegogranados.contru_movil.ListView.Order_Entry_List;
+import com.tec.diegogranados.contru_movil.Post.Communicator_Database;
 import com.tec.diegogranados.contru_movil.R;
+import com.tec.diegogranados.contru_movil.SQL_Lite.DataBaseManager;
 
 import java.util.ArrayList;
-
+/**
+ * Clase que maneja la ventana
+ * de categorias de la aplicacion.
+ */
 public class Orders extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -42,7 +53,7 @@ public class Orders extends AppCompatActivity
     Communicator comunicador;
     Order_Adapter_List adapter;
     Button button_Create_Orders;
-    Orden[] ordenes;
+    Pedido[] pedidos;
     boolean accion;
 
     @Override
@@ -76,6 +87,13 @@ public class Orders extends AppCompatActivity
         }
     }
 
+    /**
+     * Metodo sobreescrito que crea los diferentes
+     * menus que se muestran en la ventana de la aplicacion.
+     * @param menu es el archivo xml que recibe para cargar
+     * la vista de menu
+     * @return
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main__page__app, menu);
@@ -110,7 +128,12 @@ public class Orders extends AppCompatActivity
 
         return super.onOptionsItemSelected(item);
     }
-
+    /**
+     * Metodo que define las acciones a tomar con cada uno de los
+     * elementos del menu desplegable.Todos son redireccionamientos.
+     * @param item es el item seleccionado del menu.
+     * @return
+     */
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
@@ -146,40 +169,98 @@ public class Orders extends AppCompatActivity
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
-
+    /**
+     * Clase interna que seteara los valores
+     * de los listViews e incorporara
+     * gran parte de la logica de la ventana.
+     */
     public class Communicator extends AsyncTask<String[][], String[][], String[][]> {
         public Communicator() {
         }
-
+        /**
+         * Metodo sobreescrito que se ejecuta
+         * en segundo plano. En el se establecen
+         * los adaptadores y se solicicita la
+         * informacion para cargar en el Activity
+         * @param strings
+         * @return
+         */
         @Override
         protected String[][] doInBackground(String[][]... strings) {
-            return new String[0][];
-        }
-
-        @Override
-        protected void onPostExecute(String[][] result) {
             listview = (ListView) findViewById(R.id.ListView_Orders);
             //Se llaman los metodos auxiliares del metodo.
             Set_Adapter(listview);
+            return new String[0][];
+        }
+        /**
+         * Metodo que se ejecuta luego del
+         * doInBackground. Define las
+         * acciones al presionar un
+         * elememto de la lista.
+         * @param result
+         */
+        @Override
+        protected void onPostExecute(String[][] result) {
             AccionItemLista(listview, result);
         }
     }
+    /**
+     * Metodo que realiza un query
+     * para obtener las categorias
+     * presentes de la app.
+     * Puede ser con o sin red.
+     */
+    private void getOrdenes(){
+        boolean connection = Communicator_Database.isOnline(getApplicationContext());
+        if (connection == true) {
+            Communicator_Database com = new Communicator_Database();
+            String message = com.peticion("//show//", "{\"type\":\"orders\"}");
 
+            Gson gson = new Gson();
+            pedidos = gson.fromJson(message, Pedido[].class);
+        }
+        else {
+            getOrders();
+        }
+    }
+    /**
+     * Metodo para obtener las
+     * categorias sin internet.
+     * Para ello realiza un Query
+     * a la base de datos de SQLITE.
+     */
+    private void getOrders(){
+        DataBaseManager DBM = new DataBaseManager(getApplicationContext());
+        Cursor cursor= DBM.getPedido();
+        System.out.println("Cantidad de ordenes: "+cursor.getCount());
+        pedidos = new Pedido[cursor.getCount()];
+        cursor.moveToFirst();
+        for(int i=0;i<cursor.getCount();i++){
+            Pedido cat = new Pedido();
+            cat.id = cursor.getInt(0);
+            cat.creacion = cursor.getString(1);
+            cat.nombre = cursor.getString(2);
+            cat.precio = cursor.getInt(3);
+            cursor.moveToNext();
+            pedidos[i] = cat;
+        }
+    }
+
+
+    /**
+     * Metodo en el que se establece el adapter
+     * y la lista de elementos que se añadiran
+     * al listView
+     * @param lista es el listView cargado desde el XML
+     */
     private void Set_Adapter(ListView lista){
 
-        String[][] misPedidos ={{"Tecnologico","Cimientos","Concluido"}
-                ,{"UNA","Paredes","Incompleto"},{"UCR","Cielo","Concluido"}
-                ,{"HP","Instalacion Electrica","Incompleto"},{"Teradyne","Instalacion Pluvial","Incompleto"}
-                ,{"Casa Diego","Techo","Concluido"},{"Casa Alerto","Mueble Pintura","Incompleto"}
-                ,{"El Aguila","Tuberia","75","Incompleto"},{"Casa Enso","Canoas","Incompleto"}
-                ,{"UNA","Paredes","Incompleto"},{"UCR","Cielo","Concluido"}
-                ,{"HP","Instalacion Electrica","Incompleto"},{"Teradyne","Instalacion Pluvial","Incompleto"}
-                ,{"Casa Diego","Techo","Concluido"},{"Casa Alerto","Mueble Pintura","Incompleto"}
-                ,{"El Aguila","Tuberia","75","Incompleto"},{"Casa Enso","Canoas","Incompleto"}};
+        getOrdenes();
 
         ArrayList<Order_Entry_List> datos = new ArrayList<Order_Entry_List>();
-        for(int i = 0; i < misPedidos.length; i++){
-            datos.add(new Order_Entry_List(R.mipmap.ic_person_pin_black_24dp,misPedidos[i][0],misPedidos[i][1]));
+        for(int i = 0; i < pedidos.length; i++){
+            datos.add(new Order_Entry_List(R.mipmap.ic_person_pin_black_24dp,
+                    String.valueOf(pedidos[i].nombre),String.valueOf(pedidos[i].creacion)));
         }
 
         adapter = new Order_Adapter_List(getApplicationContext(), R.layout.order_list_view, datos){
@@ -196,25 +277,42 @@ public class Orders extends AppCompatActivity
             }
         };
 
-        lista.setAdapter(adapter);
     }
-
+    /**
+     * Metodo en el que se definen las acciones
+     * para cada uno de los elementos de la lista.
+     * @param lista ListView de la app
+     * @param result Valor agregado.
+     */
     private void AccionItemLista(ListView lista, String[][] result){
+        lista.setAdapter(adapter);
         lista.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> pariente, View view, int posicion, long id) {
                 Order_Entry_List elegido = (Order_Entry_List) pariente.getItemAtPosition(posicion);
+                CharSequence texto =
+                        "Name : " + pedidos[posicion].nombre + "\n"+
+                        "Date : " + pedidos[posicion].creacion + "\n"+
+                        "Price : "+ pedidos[posicion].precio;
 
-                CharSequence texto = "Seleccionado: " + elegido.get_Titulo() +": "+ elegido.get_Descripcion();
-                Toast toast = Toast.makeText(Orders.this, texto, Toast.LENGTH_LONG);
-                toast.show();
+                AlertDialog.Builder builder1 = new AlertDialog.Builder(Orders.this);
+                builder1.setTitle(elegido.get_Titulo());
+                builder1.setMessage(texto);
+                builder1.setCancelable(true);
+                builder1.setNeutralButton(android.R.string.ok,
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.cancel();
+                            }
+                        });
+                builder1.show();
             }
         });
 
         lista.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
 
             @Override
-            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
+            public boolean onItemLongClick(AdapterView<?> adapterView, View view, final int i, final long l) {
 
                 AlertDialog.Builder builder1 = new AlertDialog.Builder(Orders.this);
                 builder1.setTitle("Action");
@@ -230,17 +328,22 @@ public class Orders extends AppCompatActivity
                 builder1.setPositiveButton("Update",
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
-                                Toast toast = Toast.makeText(Orders.this, "Accion de actualizacion", Toast.LENGTH_LONG);
-                                toast.show();
-                                dialog.cancel();
+                                siguiente = new Intent(Orders.this, Registry_Order.class);
+                                siguiente.putExtra("Action","Update");
+                                siguiente.putExtra("id",String.valueOf(pedidos[(int)l].id));
+                                siguiente.putExtra("creacion",pedidos[(int)l].creacion);
+                                siguiente.putExtra("precio",String.valueOf(pedidos[(int)l].precio));
+                                siguiente.putExtra("nombre",pedidos[(int)l].nombre);
+                                startActivity(siguiente);
+                                dialog.cancel();//{"id":1,"creacion":"2016-11-18T00:00:00","precio":161900,"nombre":"Javier Sancho"}
                             }
                         });
 
                 builder1.setNegativeButton("Delete",
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
-                                Toast toast = Toast.makeText(Orders.this, "Accion de borrado", Toast.LENGTH_LONG);
-                                toast.show();
+                                ComDelete del = new ComDelete(pedidos[(int) l]);
+                                del.execute();
                                 dialog.cancel();
                             }
                         });
@@ -258,5 +361,88 @@ public class Orders extends AppCompatActivity
                 startActivity(siguiente);
             }
         });
+    }
+
+    /**
+     * Clase que incorpora una ejecucion
+     * en paralelo a la principal
+     * para poder eliminar una categoria.
+     */
+    public class ComDelete extends AsyncTask<String[][], String[][], String[][]> {
+        Pedido pedido;
+        public ComDelete(Pedido pPedidos) {
+            pedido = pPedidos;
+        }
+        /**
+         * Logica para borrar
+         * con red o sin ella.
+         * @param strings
+         * @return
+         */
+        @Override
+        protected String[][] doInBackground(String[][]... strings) {
+            if (Communicator_Database.isOnline(getApplicationContext())){
+                if (accionDeleteEnBase(pedido))
+                    accion=true;
+                else{
+                    if (accionDeleteEnTelefono(pedido))
+                        accion=true;
+                    else
+                        accion=false;
+                }
+            }
+            else{
+                if (accionDeleteEnTelefono(pedido))
+                    accion=true;
+                else
+                    accion=false;
+            }
+            return new String[0][0];
+        }
+        /**
+         * Acorde a la decision tomada en el background
+         * mostrara un toast u otro.
+         * @param result
+         */
+        @Override
+        protected void onPostExecute(String[][] result) {
+            if (accion == true){
+                siguiente = new Intent(getApplicationContext(),Categories.class);
+                startActivity(siguiente);
+            }
+            else{
+                Toast toast = Toast.makeText(Orders.this,
+                        "We cannot delete this order in this moment.", Toast.LENGTH_LONG);
+                toast.show();
+            }
+        }
+    }
+    /**
+     * Metodo que borra un elemento de la base de datos del telefono.
+     * @param pedido wrapper a eliminar.
+     * @return
+     */
+    //Metodo que borra un elemento de la base de datos.
+    private boolean accionDeleteEnBase(Pedido pedido){
+
+        return false;
+    }
+    /**
+     * Metodo que elimina un elemento de la
+     * base de datos real.
+     * @param pedido Wrapper del elemento
+     *                   a eliminar.
+     * @return
+     */
+    //Metodo que borra un elemento de la base de datos del telefono.
+    private boolean accionDeleteEnTelefono(Pedido pedido){
+        Communicator_Database com = new Communicator_Database();
+
+        Gson gson = new Gson();
+        String message = com.peticion("//control//", "{\"operation\":\"delete\",\"type\":\"order\"" +
+                ",\"jsonObject\":"+ gson.toJson(pedido) +"}");
+
+        Result Resultado = gson.fromJson(message, Result.class);
+        return Resultado.success;
     }
 }

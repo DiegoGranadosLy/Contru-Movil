@@ -21,163 +21,76 @@
     <ImageView
         android:id="@+id/imageView1"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
+        android:layout_height="125dp"
         android:scaleType="fitCenter"
         android:src="@mipmap/ic_local_shipping_black_24dp" />
 
     <LinearLayout
-        android:layout_height="100dp"
+        android:layout_height="match_parent"
         android:layout_width="356dp"
-        android:layout_weight="0.14"
         android:orientation="horizontal"
         >
 
-        <LinearLayout
-            android:layout_height="100dp"
-            android:layout_width="356dp"
-            android:layout_weight="0.14"
-            android:orientation="vertical">
-
-            <TextView
-                android:layout_height="wrap_content"
-                android:layout_width="wrap_content"
-                android:text="@string/Branch_Registry_Order"
-                android:gravity="center_horizontal"
-                android:textSize="20dp"/>
-            <TextView
-                android:layout_height="wrap_content"
-                android:layout_width="wrap_content"
-                android:text="XXXXxxx"
-                android:id="@+id/TextView_Branch_Registry_Order"
-                android:gravity="center_horizontal"/>
-            <Button
-                android:layout_height="wrap_content"
-                android:layout_width="wrap_content"
-                android:text="@string/Branch_Registry_Order"
-                android:id="@+id/Button_BBranch_Registry_Order"
-                android:gravity="center_horizontal"
-                />
-        </LinearLayout>
 
         <LinearLayout
-            android:layout_height="100dp"
-            android:layout_width="356dp"
-            android:layout_weight="0.14"
-            android:orientation="vertical">
-
-            <TextView
-                android:layout_height="wrap_content"
-                android:layout_width="wrap_content"
-                android:text="@string/Client_Registry_Order"
-                android:gravity="center_horizontal"
-                android:textSize="20dp"/>
-            <TextView
-                android:layout_height="wrap_content"
-                android:layout_width="wrap_content"
-                android:text="xxxXXX"
-                android:id="@+id/TextView_Client_Registry_Order"
-                android:gravity="center_horizontal"/>
-            <Button
-                android:layout_height="wrap_content"
-                android:layout_width="wrap_content"
-                android:text="@string/Client_Registry_Order"
-                android:id="@+id/Button_BClient_Registry_Order"
-                android:gravity="center_horizontal"
-                />
-
-        </LinearLayout>
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_height="100dp"
-        android:layout_width="356dp"
-        android:layout_weight="0.14"
-        android:orientation="horizontal"
-        >
-
-        <LinearLayout
-            android:layout_height="100dp"
-            android:layout_width="356dp"
-            android:layout_weight="0.14"
-            android:orientation="vertical">
-
-            <TextView
-                android:layout_height="wrap_content"
-                android:layout_width="wrap_content"
-                android:text="@string/Telephone_Registry_Order"
-                android:gravity="center_horizontal"
-                android:textSize="20dp"/>
-            <EditText
-                android:layout_height="wrap_content"
-                android:layout_width="wrap_content"
-                android:inputType="phone"
-                android:text="1111111111111111111"
-                android:id="@+id/EditText_Telephone_Registry_Order"
-                android:gravity="center_horizontal"/>
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_height="100dp"
-            android:layout_width="356dp"
-            android:layout_weight="0.14"
-            android:orientation="vertical">
-
-            <TextView
-                android:layout_height="wrap_content"
-                android:layout_width="wrap_content"
-                android:text="@string/Time_Registry_Order"
-                android:gravity="center_horizontal"
-                android:textSize="20dp"/>
-            <TextView
-                android:layout_height="wrap_content"
-                android:layout_width="wrap_content"
-                android:text="xxxXXX"
-                android:id="@+id/TextView_Time_Registry_Order"
-                android:gravity="center_horizontal"/>
-            <Button
-                android:layout_height="wrap_content"
-                android:layout_width="wrap_content"
-                android:text="@string/Time_Registry_Order"
-                android:id="@+id/Button_BTime_Registry_Order"
-                android:gravity="center_horizontal"
-                />
-
-        </LinearLayout>
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_height="187dp"
-        android:layout_width="match_parent"
-        android:orientation="horizontal"
-        android:weightSum="1">
-        <ListView
-            android:layout_width="243dp"
             android:layout_height="match_parent"
-            android:id="@+id/ListView_OrdersProducts"
-            android:layout_weight="1.05" />
-
-        <LinearLayout
-            android:layout_height="187dp"
-            android:layout_width="wrap_content"
-            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:orientation="horizontal"
             android:weightSum="1">
 
-            <Button
-                android:layout_height="wrap_content"
-                android:layout_width="wrap_content"
-                android:text="@string/Add_Registry_Order"
-                android:id="@+id/Button_BAddProduct_Registry_Order"
-                android:gravity="center_horizontal" />
-            <Button
-                android:layout_height="wrap_content"
-                android:layout_width="wrap_content"
-                android:text="@string/Buy_Registry_Order"
-                android:id="@+id/Button_BBuyProduct_Registry_Order"
-                android:gravity="center_horizontal" />
+            <ListView
+                android:layout_width="178dp"
+                android:layout_height="match_parent"
+                android:id="@+id/ListView_OrdersProducts" />
+
+            <LinearLayout
+                android:layout_height="435dp"
+                android:layout_width="match_parent"
+                android:orientation="vertical"
+                android:weightSum="1">
+
+                <TextView
+                    android:text="Date"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/Date"
+                    android:textSize="20dp"/>
+
+                <Button
+                    android:text="Date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/BDATE" />
+
+                <TextView
+                    android:text="Client"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/Client"
+                    android:textSize="20dp"/>
+
+                <Button
+                    android:text="Client"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/BClient" />
+
+                <Button
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:text="@string/Add_Registry_Order"
+                    android:id="@+id/Button_BAddProduct_Registry_Order"
+                    android:gravity="center_horizontal" />
+
+                <Button
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:text="@string/Buy_Registry_Order"
+                    android:id="@+id/Button_BBuyProduct_Registry_Order"
+                    android:gravity="center_horizontal" />
+
+            </LinearLayout>
         </LinearLayout>
-
     </LinearLayout>
-
-
 </LinearLayout>
+

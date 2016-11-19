@@ -2,6 +2,7 @@ package com.tec.diegogranados.contru_movil.Activitys;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -34,10 +35,15 @@ import com.tec.diegogranados.contru_movil.ListView.Order_Adapter_List;
 import com.tec.diegogranados.contru_movil.ListView.Order_Entry_List;
 import com.tec.diegogranados.contru_movil.Post.Communicator_Database;
 import com.tec.diegogranados.contru_movil.R;
+import com.tec.diegogranados.contru_movil.SQL_Lite.DataBaseManager;
 import com.tec.diegogranados.contru_movil.Threads.Thread_Sync;
 
 import java.util.ArrayList;
 
+/**
+ * Clase que maneja la ventana
+ * de categorias de la aplicacion.
+ */
 public class Categories extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -91,6 +97,13 @@ public class Categories extends AppCompatActivity
         }
     }
 
+    /**
+     * Metodo sobreescrito que crea los diferentes
+     * menus que se muestran en la ventana de la aplicacion.
+     * @param menu es el archivo xml que recibe para cargar
+     * la vista de menu
+     * @return
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main__page__app, menu);
@@ -126,7 +139,12 @@ public class Categories extends AppCompatActivity
         return super.onOptionsItemSelected(item);
     }
 
-    @SuppressWarnings("StatementWithEmptyBody")
+    /**
+     * Metodo que define las acciones a tomar con cada uno de los
+     * elementos del menu desplegable.Todos son redireccionamientos.
+     * @param item es el item seleccionado del menu.
+     * @return
+     */
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         int id = item.getItemId();
@@ -163,10 +181,23 @@ public class Categories extends AppCompatActivity
         return true;
     }
 
+    /**
+     * Clase interna que seteara los valores
+     * de los listViews e incorporara
+     * gran parte de la logica de la ventana.
+     */
     public class Communicator extends AsyncTask<String[][], String[][], String[][]> {
         public Communicator() {
         }
 
+        /**
+         * Metodo sobreescrito que se ejecuta
+         * en segundo plano. En el se establecen
+         * los adaptadores y se solicicita la
+         * informacion para cargar en el Activity
+         * @param strings
+         * @return
+         */
         @Override
         protected String[][] doInBackground(String[][]... strings) {
             listview = (ListView) findViewById(R.id.ListView_Categories);
@@ -176,6 +207,13 @@ public class Categories extends AppCompatActivity
         }
 
 
+        /**
+         * Metodo que se ejecuta luego del
+         * doInBackground. Define las
+         * acciones al presionar un
+         * elememto de la lista.
+         * @param result
+         */
         @Override
         protected void onPostExecute(String[][] result) {
             AccionItemLista(listview, result);
@@ -183,6 +221,12 @@ public class Categories extends AppCompatActivity
     }
 
 
+    /**
+     * Metodo que realiza un query
+     * para obtener las categorias
+     * presentes de la app.
+     * Puede ser con o sin red.
+     */
     private void getCategorias(){
         boolean connection = Communicator_Database.isOnline(getApplicationContext());
         if (connection == true) {
@@ -193,16 +237,17 @@ public class Categories extends AppCompatActivity
             categorias = gson.fromJson(message, Categoria[].class);
         }
         else {
-            Categoria a = new Categoria();
-            a.id =0;a.nombre="Caca";a.descripcion="Huele mal";
-            Categoria b = new Categoria();
-            b.id =0;b.nombre="Madera";b.descripcion="Color cafe";
-            Categoria c = new Categoria();
-            c.id =0;c.nombre="Metal";c.descripcion="Brillante";
-            categorias = new Categoria[]{a,b,c};
+            getCategory();
+
         }
     }
 
+    /**
+     * Metodo en el que se establece el adapter
+     * y la lista de elementos que se añadiran
+     * al listView
+     * @param lista es el listView cargado desde el XML
+     */
     private void Set_Adapter(ListView lista){
 
         getCategorias();
@@ -212,7 +257,7 @@ public class Categories extends AppCompatActivity
             datos.add(new Order_Entry_List(R.mipmap.ic_person_pin_black_24dp, categorias[i].nombre, categorias[i].descripcion));
         }
 
-
+//      Adaptador personalizado
         adapter = new Order_Adapter_List(getApplicationContext(), R.layout.order_list_view, datos){
             @Override
             public void onEntrada(Object entrada, View view) {
@@ -226,11 +271,38 @@ public class Categories extends AppCompatActivity
                 imagen_entrada.setImageResource(((Order_Entry_List) entrada).get_idImagen());
             }
         };
-
-        lista.setAdapter(adapter);
     }
 
+    /**
+     * Metodo para obtener las
+     * categorias sin internet.
+     * Para ello realiza un Query
+     * a la base de datos de SQLITE.
+     */
+    private void getCategory(){
+        DataBaseManager DBM = new DataBaseManager(getApplicationContext());
+        Cursor cursor= DBM.getCategoria();
+        System.out.println("Cantidad de categorias: "+cursor.getCount());
+        categorias = new Categoria[cursor.getCount()];
+        cursor.moveToFirst();
+        for(int i=0;i<cursor.getCount();i++){
+            Categoria cat = new Categoria();
+            cat.id = cursor.getInt(0);
+            cat.nombre = cursor.getString(1);
+            cat.descripcion = cursor.getString(2);
+            cursor.moveToNext();
+            categorias[i] = cat;
+        }
+    }
+
+    /**
+     * Metodo en el que se definen las acciones
+     * para cada uno de los elementos de la lista.
+     * @param lista ListView de la app
+     * @param result Valor agregado.
+     */
     private void AccionItemLista(ListView lista, String[][] result){
+        lista.setAdapter(adapter);//Accion al ser click
         lista.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> pariente, View view, int posicion, long id) {
@@ -238,7 +310,8 @@ public class Categories extends AppCompatActivity
 
                 //Seccion donde se muestra la informacion del usuario./////////////////////////////
                 CharSequence texto = "Name : " + categorias[posicion].nombre + "\n"+
-                        "Description : " + categorias[posicion].descripcion ;
+                        "Description : " + categorias[posicion].descripcion + "\n"+
+                        "ID : " + categorias[posicion].id;
 
                 AlertDialog.Builder builder1 = new AlertDialog.Builder(Categories.this);
                 builder1.setTitle(elegido.get_Titulo());
@@ -253,7 +326,7 @@ public class Categories extends AppCompatActivity
                 builder1.show();
             }
         });
-
+        // Accion al hacer click prolongado.
         lista.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
 
             @Override
@@ -296,7 +369,7 @@ public class Categories extends AppCompatActivity
                 return false;
             }
         });
-
+       //Accion de crear una categoria
         button_Create_Categories.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -307,26 +380,37 @@ public class Categories extends AppCompatActivity
         });
     }
 
+    /**
+     * Clase que incorpora una ejecucion
+     * en paralelo a la principal
+     * para poder eliminar una categoria.
+     */
     public class ComDelete extends AsyncTask<String[][], String[][], String[][]> {
         Categoria categorias;
         public ComDelete(Categoria pCategoria) {
             categorias = pCategoria;
         }
 
+        /**
+         * Logica para borrar
+         * con red o sin ella.
+         * @param strings
+         * @return
+         */
         @Override
         protected String[][] doInBackground(String[][]... strings) {
             if (Communicator_Database.isOnline(getApplicationContext())){
-                if (accionDeleteEnBase(categorias))
+                if (accionDeleteEnTelefono(categorias))
                     accion=true;
                 else{
-                    if (accionDeleteEnTelefono(categorias))
+                    if (accionDeleteEnBase(categorias))
                         accion=true;
                     else
                         accion=false;
                 }
             }
             else{
-                if (accionDeleteEnTelefono(categorias))
+                if (accionDeleteEnBase(categorias))
                     accion=true;
                 else
                     accion=false;
@@ -334,10 +418,15 @@ public class Categories extends AppCompatActivity
             return new String[0][0];
         }
 
+        /**
+         * Acorde a la decision tomada en el background
+         * mostrara un toast u otro.
+         * @param result
+         */
         @Override
         protected void onPostExecute(String[][] result) {
             if (accion == true){
-                siguiente = new Intent(getApplicationContext(),Clients.class);
+                siguiente = new Intent(getApplicationContext(),Categories.class);
                 startActivity(siguiente);
             }
             else{
@@ -348,17 +437,36 @@ public class Categories extends AppCompatActivity
         }
     }
 
+    /**
+     * Metodo que borra un elemento de la base de datos del telefono.
+     * @param categorias wrapper a eliminar.
+     * @return
+     */
     //Metodo que borra un elemento de la base de datos.
     private boolean accionDeleteEnBase(Categoria categorias){
-        return false;
+        DataBaseManager DBM = new DataBaseManager(getApplicationContext());
+        int exito = DBM.deleteCategoria(categorias.id);
+        if (exito==-1)
+            return false;
+        else{
+            return true;
+        }
     }
 
+    /**
+     * Metodo que elimina un elemento de la
+     * base de datos real.
+     * @param categorias Wrapper del elemento
+     *                   a eliminar.
+     * @return
+     */
     //Metodo que borra un elemento de la base de datos del telefono.
     private boolean accionDeleteEnTelefono(Categoria categorias){
         Communicator_Database com = new Communicator_Database();
 
+        System.out.println("Entrando por alla");
         Gson gson = new Gson();
-        String message = com.peticion("//control//", "{\"operation\":\"delete\",\"type\":\"categories\"" +
+        String message = com.peticion("//control//", "{\"operation\":\"delete\",\"type\":\"category\"" +
                 ",\"jsonObject\":"+ gson.toJson(categorias) +"}");
 
         Result Resultado = gson.fromJson(message, Result.class);
